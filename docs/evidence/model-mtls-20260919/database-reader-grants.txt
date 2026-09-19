@@ -1,0 +1,3 @@
+model_reader|model_artifacts|SELECT
+model_reader|model_versions|SELECT
+model_reader|models|SELECT

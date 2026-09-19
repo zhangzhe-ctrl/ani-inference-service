@@ -1,0 +1,35 @@
+[
+  {
+    "Id": "sha256:daadd73c899b444c8b21be50e3da4c9b58f6ac323b298d709e8ef8d91953e2b1",
+    "RepoTags": [
+      "ani-model:inf-model-mtls-20260919-d1aefc27048b"
+    ],
+    "RepoDigests": [
+      "ani-model@sha256:daadd73c899b444c8b21be50e3da4c9b58f6ac323b298d709e8ef8d91953e2b1"
+    ],
+    "Architecture": "amd64",
+    "Os": "linux"
+  },
+  {
+    "Id": "sha256:a88bcccc21e151995e6ac06351e984aca4228f62409b600061c68e04c4ebec6c",
+    "RepoTags": [
+      "ani-probe:inf-model-mtls-20260919-5a30185f3c1c"
+    ],
+    "RepoDigests": [
+      "ani-probe@sha256:a88bcccc21e151995e6ac06351e984aca4228f62409b600061c68e04c4ebec6c"
+    ],
+    "Architecture": "amd64",
+    "Os": "linux"
+  },
+  {
+    "Id": "sha256:051f7b7b3abdd564d5d1bd1e8c4b9c1b6e77087d1dd22020ede611c096a272e0",
+    "RepoTags": [
+      "postgres:17.11-bookworm"
+    ],
+    "RepoDigests": [
+      "postgres@sha256:051f7b7b3abdd564d5d1bd1e8c4b9c1b6e77087d1dd22020ede611c096a272e0"
+    ],
+    "Architecture": "amd64",
+    "Os": "linux"
+  }
+]

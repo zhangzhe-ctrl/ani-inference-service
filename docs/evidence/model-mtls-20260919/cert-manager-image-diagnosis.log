@@ -1,0 +1,8 @@
+  -m, --multi-image-archive   Interpret additional arguments as images not tags and create a multi-image-archive (only for docker-archive)
+  -o, --output string         Write to a specified file (default: stdout, which must be redirected)
+  -q, --quiet                 Suppress the output
+sha256:aa2bc58725d92a643f5069dde58abc93b65566ded8951348873ac9ee7efef66c [quay.io/jetstack/cert-manager-cainjector:v1.21.2]
+sha256:57bb397c639e0e94184ba67848e5dad04284f24645e521e764a0ee5f5002f286 [quay.io/jetstack/cert-manager-controller:v1.21.2]
+sha256:b929259301ee75270ab4651d5e6bd4ba7b6624b1ce48ba767d064295a9312101 [quay.io/jetstack/cert-manager-webhook:v1.21.2]
+E0919 08:31:41.275271       1 main.go:43] "error executing command" err="unknown flag: --secure-port" logger="cert-manager"
+E0919 08:31:42.194908       1 main.go:43] "error executing command" err="unknown flag: --cluster-resource-namespace" logger="cert-manager"

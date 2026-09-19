@@ -1,0 +1,47 @@
+{
+  "status": "pass",
+  "before": {
+    "model-tls": {
+      "resourceVersion": "2050357",
+      "attributes": "serial=028492927228ABD8CFD53C09EDC36321B6CA3AA2\nsha256 Fingerprint=24:94:80:E2:F9:57:31:B9:00:83:3F:73:F8:01:9E:F0:9D:BD:86:5E:BD:33:6A:8E:16:BC:E7:E4:12:15:96:C5\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Server Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-model-service\n"
+    },
+    "inference-tls": {
+      "resourceVersion": "2050379",
+      "attributes": "serial=541A59487C8D1C82869E3AB5555564EA04DA951A\nsha256 Fingerprint=CD:D1:03:B8:F5:88:FF:B5:6A:34:A8:0B:52:37:DE:A3:11:E0:5C:BA:61:D3:E7:43:E2:3E:EA:DB:DF:50:99:19\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-inference-service\n"
+    },
+    "governance-tls": {
+      "resourceVersion": "2050389",
+      "attributes": "serial=6267FC7BC7108C25E2314D28C3C544E9F2702F56\nsha256 Fingerprint=49:52:59:0E:65:B1:32:EC:4A:BE:6D:3B:B6:A7:19:BD:00:D9:14:1C:10:9D:6F:FC:C9:29:52:72:4E:57:9F:B6\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-governance\n"
+    },
+    "wrong-tls": {
+      "resourceVersion": "2050412",
+      "attributes": "serial=1B4CA2E73E790584AFAFE4E6B3577E99ED58750A\nsha256 Fingerprint=83:13:8D:F7:DF:3D:C5:89:EE:E7:81:39:B2:17:92:42:70:65:F1:76:C4:E5:6C:23:34:0E:FB:14:36:8C:12:94\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:wrong-service\n"
+    },
+    "untrusted-tls": {
+      "resourceVersion": "2050414",
+      "attributes": "serial=7E37CD2A81F5DF32472DC3DCD01747B7CD17B6D3\nsha256 Fingerprint=D9:17:5E:50:11:8D:85:4E:06:BC:99:86:AA:10:BC:A6:CF:65:5D:91:3B:99:E0:2D:59:1A:72:24:1C:58:AA:DC\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-inference-service\n"
+    }
+  },
+  "after": {
+    "model-tls": {
+      "resourceVersion": "2052531",
+      "attributes": "serial=30A690E7D9AA15C9C43E3C1A59D17C802A0B872D\nsha256 Fingerprint=E8:4B:41:46:80:00:9F:81:74:E7:8C:DA:31:30:00:6D:E3:FE:A3:10:3C:C2:35:5E:03:FC:4E:3A:D4:D8:68:90\nnotBefore=Sep 19 08:37:52 2026 GMT\nnotAfter=Sep 27 08:37:52 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Server Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-model-service\n"
+    },
+    "inference-tls": {
+      "resourceVersion": "2052559",
+      "attributes": "serial=2D5948AE8A364D174C7FD0E4CB84B0C1B15CD27C\nsha256 Fingerprint=68:5C:DC:4B:A1:59:D2:7A:4A:82:5F:03:B9:95:F6:23:0B:34:5C:75:3E:37:42:BD:E4:B9:91:04:EC:A9:C2:0C\nnotBefore=Sep 19 08:37:52 2026 GMT\nnotAfter=Sep 27 08:37:52 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-inference-service\n"
+    },
+    "governance-tls": {
+      "resourceVersion": "2050389",
+      "attributes": "serial=6267FC7BC7108C25E2314D28C3C544E9F2702F56\nsha256 Fingerprint=49:52:59:0E:65:B1:32:EC:4A:BE:6D:3B:B6:A7:19:BD:00:D9:14:1C:10:9D:6F:FC:C9:29:52:72:4E:57:9F:B6\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-governance\n"
+    },
+    "wrong-tls": {
+      "resourceVersion": "2050412",
+      "attributes": "serial=1B4CA2E73E790584AFAFE4E6B3577E99ED58750A\nsha256 Fingerprint=83:13:8D:F7:DF:3D:C5:89:EE:E7:81:39:B2:17:92:42:70:65:F1:76:C4:E5:6C:23:34:0E:FB:14:36:8C:12:94\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:wrong-service\n"
+    },
+    "untrusted-tls": {
+      "resourceVersion": "2050414",
+      "attributes": "serial=7E37CD2A81F5DF32472DC3DCD01747B7CD17B6D3\nsha256 Fingerprint=D9:17:5E:50:11:8D:85:4E:06:BC:99:86:AA:10:BC:A6:CF:65:5D:91:3B:99:E0:2D:59:1A:72:24:1C:58:AA:DC\nnotBefore=Sep 19 08:33:25 2026 GMT\nnotAfter=Sep 26 08:33:25 2026 GMT\nX509v3 Extended Key Usage: \n    TLS Web Client Authentication\nX509v3 Subject Alternative Name: critical\n    DNS:ani-inference-service\n"
+    }
+  }
+}

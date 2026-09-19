@@ -1,0 +1,102 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Issuer",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Issuer\",\"metadata\":{\"annotations\":{},\"name\":\"lab-ca\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"ca\":{\"secretName\":\"lab-root\"}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:24Z",
+                "generation": 1,
+                "name": "lab-ca",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050295",
+                "uid": "3a77c27f-f0b4-4f55-ba6e-06497b8b8ae8"
+            },
+            "spec": {
+                "ca": {
+                    "secretName": "lab-root"
+                }
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:24Z",
+                        "message": "Signing CA verified",
+                        "observedGeneration": 1,
+                        "reason": "KeyPairVerified",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Issuer",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Issuer\",\"metadata\":{\"annotations\":{},\"name\":\"selfsigned\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"selfSigned\":{}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:22Z",
+                "generation": 1,
+                "name": "selfsigned",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050235",
+                "uid": "4ee1a6a0-6832-4b60-b620-e4c3808e6f4a"
+            },
+            "spec": {
+                "selfSigned": {}
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:22Z",
+                        "observedGeneration": 1,
+                        "reason": "IsReady",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Issuer",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Issuer\",\"metadata\":{\"annotations\":{},\"name\":\"untrusted-ca\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"ca\":{\"secretName\":\"untrusted-root\"}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:24Z",
+                "generation": 1,
+                "name": "untrusted-ca",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050298",
+                "uid": "68dca24b-e2dc-4419-b4b6-97072df1e707"
+            },
+            "spec": {
+                "ca": {
+                    "secretName": "untrusted-root"
+                }
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:24Z",
+                        "message": "Signing CA verified",
+                        "observedGeneration": 1,
+                        "reason": "KeyPairVerified",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

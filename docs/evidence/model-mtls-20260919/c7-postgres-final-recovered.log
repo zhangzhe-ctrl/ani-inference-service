@@ -1,0 +1,22 @@
+PASS read elapsed=44.072326ms response={
+  "model":  {
+    "tenantId":  "11111111-1111-4111-8111-111111111111",
+    "id":  "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+    "modelId":  "fixture-a"
+  },
+  "version":  {
+    "id":  "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+    "modelId":  "fixture-a",
+    "version":  "v1",
+    "format":  "gguf",
+    "checksumSha256":  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "storagePath":  "11111111-1111-4111-8111-111111111111/fixture-a/v1/model.gguf",
+    "status":  "ready",
+    "engineType":  "vllm",
+    "startupCommand":  "vllm serve",
+    "startupArgs":  [
+      "--dtype",
+      "auto"
+    ]
+  }
+}

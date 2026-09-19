@@ -1,0 +1,327 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "apps/v1",
+            "kind": "Deployment",
+            "metadata": {
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "4",
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"name\":\"model\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"app\":\"model\"}},\"strategy\":{\"rollingUpdate\":{\"maxSurge\":1,\"maxUnavailable\":0},\"type\":\"RollingUpdate\"},\"template\":{\"metadata\":{\"labels\":{\"app\":\"model\"}},\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-conf\",\"/config/config.yaml\"],\"env\":[{\"name\":\"ANI_DATABASE_DSN\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"dsn\",\"name\":\"database\"}}},{\"name\":\"ANI_MODEL_MODE\",\"value\":\"catalog-read\"},{\"name\":\"ANI_MODEL_CLIENT_CA\",\"value\":\"/trust/ca.crt\"},{\"name\":\"ANI_MODEL_TLS_CERT\",\"value\":\"/identity/tls.crt\"},{\"name\":\"ANI_MODEL_TLS_KEY\",\"value\":\"/identity/tls.key\"}],\"image\":\"ani-model:inf-model-mtls-20260919-d1aefc27048b\",\"imagePullPolicy\":\"Never\",\"name\":\"model\",\"readinessProbe\":{\"httpGet\":{\"path\":\"/readyz\",\"port\":19091},\"periodSeconds\":3,\"timeoutSeconds\":2},\"resources\":{\"limits\":{\"cpu\":\"2\",\"memory\":\"768Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/config\",\"name\":\"config\",\"readOnly\":true}]}],\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"model-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"model-config\"},\"name\":\"config\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:34:52Z",
+                "generation": 7,
+                "name": "model",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054665",
+                "uid": "ccd5c350-26a6-478c-b649-481a1b110749"
+            },
+            "spec": {
+                "progressDeadlineSeconds": 600,
+                "replicas": 1,
+                "revisionHistoryLimit": 10,
+                "selector": {
+                    "matchLabels": {
+                        "app": "model"
+                    }
+                },
+                "strategy": {
+                    "rollingUpdate": {
+                        "maxSurge": 1,
+                        "maxUnavailable": 0
+                    },
+                    "type": "RollingUpdate"
+                },
+                "template": {
+                    "metadata": {
+                        "annotations": {
+                            "kubectl.kubernetes.io/restartedAt": "2026-09-19T16:40:17+08:00"
+                        },
+                        "labels": {
+                            "app": "model"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-conf",
+                                    "/config/config.yaml"
+                                ],
+                                "env": [
+                                    {
+                                        "name": "ANI_DATABASE_DSN",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "dsn",
+                                                "name": "database"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "ANI_MODEL_MODE",
+                                        "value": "catalog-read"
+                                    },
+                                    {
+                                        "name": "ANI_MODEL_CLIENT_CA",
+                                        "value": "/trust/ca.crt"
+                                    },
+                                    {
+                                        "name": "ANI_MODEL_TLS_CERT",
+                                        "value": "/identity/tls.crt"
+                                    },
+                                    {
+                                        "name": "ANI_MODEL_TLS_KEY",
+                                        "value": "/identity/tls.key"
+                                    }
+                                ],
+                                "image": "ani-model:inf-model-mtls-20260919-d1aefc27048b",
+                                "imagePullPolicy": "Never",
+                                "name": "model",
+                                "readinessProbe": {
+                                    "failureThreshold": 3,
+                                    "httpGet": {
+                                        "path": "/readyz",
+                                        "port": 19091,
+                                        "scheme": "HTTP"
+                                    },
+                                    "periodSeconds": 3,
+                                    "successThreshold": 1,
+                                    "timeoutSeconds": 2
+                                },
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "2",
+                                        "memory": "768Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "100m",
+                                        "memory": "128Mi"
+                                    }
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/config",
+                                        "name": "config",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Always",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "model-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "model-config"
+                                },
+                                "name": "config"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "availableReplicas": 1,
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:34:52Z",
+                        "lastUpdateTime": "2026-09-19T08:42:24Z",
+                        "message": "ReplicaSet \"model-6d58797ffb\" has successfully progressed.",
+                        "reason": "NewReplicaSetAvailable",
+                        "status": "True",
+                        "type": "Progressing"
+                    },
+                    {
+                        "lastTransitionTime": "2026-09-19T08:42:58Z",
+                        "lastUpdateTime": "2026-09-19T08:42:58Z",
+                        "message": "Deployment has minimum availability.",
+                        "reason": "MinimumReplicasAvailable",
+                        "status": "True",
+                        "type": "Available"
+                    }
+                ],
+                "observedGeneration": 7,
+                "readyReplicas": 1,
+                "replicas": 1,
+                "terminatingReplicas": 0,
+                "updatedReplicas": 1
+            }
+        },
+        {
+            "apiVersion": "apps/v1",
+            "kind": "Deployment",
+            "metadata": {
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "1",
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"name\":\"postgres\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"app\":\"postgres\"}},\"strategy\":{\"type\":\"Recreate\"},\"template\":{\"metadata\":{\"labels\":{\"app\":\"postgres\"}},\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"env\":[{\"name\":\"POSTGRES_PASSWORD\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"admin\",\"name\":\"database\"}}},{\"name\":\"POSTGRES_DB\",\"value\":\"model\"},{\"name\":\"PGDATA\",\"value\":\"/var/lib/postgresql/task/data\"}],\"image\":\"postgres:17.11-bookworm\",\"imagePullPolicy\":\"Never\",\"name\":\"postgres\",\"readinessProbe\":{\"exec\":{\"command\":[\"pg_isready\",\"-U\",\"postgres\",\"-d\",\"model\"]},\"periodSeconds\":3,\"timeoutSeconds\":2},\"resources\":{\"limits\":{\"cpu\":\"2\",\"memory\":\"768Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"mountPath\":\"/var/lib/postgresql/task\",\"name\":\"data\"}]}],\"nodeSelector\":{\"kubernetes.io/hostname\":\"ani-01\"},\"volumes\":[{\"name\":\"data\",\"persistentVolumeClaim\":{\"claimName\":\"postgres\"}}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:31Z",
+                "generation": 5,
+                "name": "postgres",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054629",
+                "uid": "f3386005-f254-466e-ba13-7f302df59658"
+            },
+            "spec": {
+                "progressDeadlineSeconds": 600,
+                "replicas": 1,
+                "revisionHistoryLimit": 10,
+                "selector": {
+                    "matchLabels": {
+                        "app": "postgres"
+                    }
+                },
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "app": "postgres"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "POSTGRES_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "admin",
+                                                "name": "database"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "POSTGRES_DB",
+                                        "value": "model"
+                                    },
+                                    {
+                                        "name": "PGDATA",
+                                        "value": "/var/lib/postgresql/task/data"
+                                    }
+                                ],
+                                "image": "postgres:17.11-bookworm",
+                                "imagePullPolicy": "Never",
+                                "name": "postgres",
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "pg_isready",
+                                            "-U",
+                                            "postgres",
+                                            "-d",
+                                            "model"
+                                        ]
+                                    },
+                                    "failureThreshold": 3,
+                                    "periodSeconds": 3,
+                                    "successThreshold": 1,
+                                    "timeoutSeconds": 2
+                                },
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "2",
+                                        "memory": "768Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "100m",
+                                        "memory": "128Mi"
+                                    }
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/var/lib/postgresql/task",
+                                        "name": "data"
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "nodeSelector": {
+                            "kubernetes.io/hostname": "ani-01"
+                        },
+                        "restartPolicy": "Always",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "data",
+                                "persistentVolumeClaim": {
+                                    "claimName": "postgres"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "availableReplicas": 1,
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:31Z",
+                        "lastUpdateTime": "2026-09-19T08:33:42Z",
+                        "message": "ReplicaSet \"postgres-755cfdf9df\" has successfully progressed.",
+                        "reason": "NewReplicaSetAvailable",
+                        "status": "True",
+                        "type": "Progressing"
+                    },
+                    {
+                        "lastTransitionTime": "2026-09-19T08:42:57Z",
+                        "lastUpdateTime": "2026-09-19T08:42:57Z",
+                        "message": "Deployment has minimum availability.",
+                        "reason": "MinimumReplicasAvailable",
+                        "status": "True",
+                        "type": "Available"
+                    }
+                ],
+                "observedGeneration": 5,
+                "readyReplicas": 1,
+                "replicas": 1,
+                "terminatingReplicas": 0,
+                "updatedReplicas": 1
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

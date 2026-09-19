@@ -1,0 +1,1 @@
+PASS outage elapsed=1.012595783s error=get model version: rpc error: code = Unavailable desc = model version store unavailable

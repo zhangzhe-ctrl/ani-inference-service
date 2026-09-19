@@ -1,0 +1,126 @@
+4014e1286a88cf237927064b9b27d0971cdbb48ffe3a89a310d0fa1efcd8a7ad list
+d21b7662415ca30cd3e8f640cfe7e00504c36e3db5bb57dfdcf4689cc652cb2d v0.0.0-20260916025225-474f37a1df63.info
+060e365cd4d5345e4fe7032e4c1e27da6ad3e67e14772eafb6935a9e175ccf56 v0.0.0-20260916025225-474f37a1df63.mod
+2a8ce323caa208a720c2477f3cbe661e7a7707e5d0fb8bf92603ce504f24a867 v0.0.0-20260916025225-474f37a1df63.zip
+PASS fixed Model public API byte comparison
+go: downloading github.com/go-kratos/kratos/contrib/otel/v3 v3.0.0-20260515082355-1ddb58e407c5
+go: downloading github.com/go-kratos/kratos/v3 v3.0.0
+go: downloading github.com/google/uuid v1.6.0
+go: downloading github.com/prometheus/client_golang v1.24.1
+go: downloading go.opentelemetry.io/otel v1.44.0
+go: downloading go.opentelemetry.io/otel/exporters/prometheus v0.66.0
+go: downloading go.opentelemetry.io/otel/metric v1.44.0
+go: downloading go.opentelemetry.io/otel/sdk/metric v1.44.0
+go: downloading go.opentelemetry.io/otel/sdk v1.44.0
+go: downloading google.golang.org/grpc v1.82.1
+go: downloading google.golang.org/protobuf v1.36.11
+go: downloading google.golang.org/genproto/googleapis/rpc v0.0.0-20260511170946-3700d4141b60
+go: downloading github.com/gorilla/mux v1.8.1
+go: downloading github.com/gorilla/websocket v1.5.3
+go: downloading google.golang.org/genproto/googleapis/api v0.0.0-20260511170946-3700d4141b60
+go: downloading go.opentelemetry.io/otel/trace v1.44.0
+go: downloading github.com/beorn7/perks v1.0.1
+go: downloading github.com/cespare/xxhash/v2 v2.3.0
+go: downloading github.com/prometheus/client_model v0.6.2
+go: downloading github.com/prometheus/common v0.70.1
+go: downloading github.com/prometheus/procfs v0.21.1
+go: downloading github.com/go-logr/logr v1.4.3
+go: downloading github.com/prometheus/otlptranslator v1.0.0
+go: downloading golang.org/x/sys v0.47.0
+go: downloading golang.org/x/net v0.57.0
+go: downloading github.com/go-playground/form/v4 v4.3.0
+go: downloading golang.org/x/sync v0.22.0
+go: downloading github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822
+go: downloading github.com/go-logr/stdr v1.2.2
+go: downloading go.opentelemetry.io/auto/sdk v1.2.1
+go: downloading gopkg.in/yaml.v3 v3.0.1
+go: downloading golang.org/x/text v0.40.0
+=== RUN   TestGovernanceMTLSBoundary
+=== RUN   TestGovernanceMTLSBoundary/valid
+=== RUN   TestGovernanceMTLSBoundary/no-cert
+=== RUN   TestGovernanceMTLSBoundary/wrong-san
+=== RUN   TestGovernanceMTLSBoundary/wrong-usage
+=== RUN   TestGovernanceMTLSBoundary/duplicate
+=== RUN   TestGovernanceMTLSBoundary/missing
+=== RUN   TestGovernanceMTLSBoundary/actor-format
+=== RUN   TestGovernanceMTLSBoundary/tenant-mismatch
+=== RUN   TestGovernanceMTLSBoundary/wrong-method
+--- PASS: TestGovernanceMTLSBoundary (0.03s)
+    --- PASS: TestGovernanceMTLSBoundary/valid (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/no-cert (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/wrong-san (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/wrong-usage (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/duplicate (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/missing (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/actor-format (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/tenant-mismatch (0.00s)
+    --- PASS: TestGovernanceMTLSBoundary/wrong-method (0.00s)
+=== RUN   TestCatalogReadinessLiveProbe
+--- PASS: TestCatalogReadinessLiveProbe (0.00s)
+=== RUN   TestInferenceReceiverMatrix
+=== RUN   TestInferenceReceiverMatrix/valid-forged-actor
+=== RUN   TestInferenceReceiverMatrix/list-denied
+=== RUN   TestInferenceReceiverMatrix/write-denied
+=== RUN   TestInferenceReceiverMatrix/governance-version-denied
+=== RUN   TestInferenceReceiverMatrix/wrong-caller
+=== RUN   TestInferenceReceiverMatrix/tenant-mismatch
+=== RUN   TestInferenceReceiverMatrix/empty-request-tenant
+=== RUN   TestInferenceReceiverMatrix/tenant-missing
+=== RUN   TestInferenceReceiverMatrix/tenant-duplicate
+=== RUN   TestInferenceReceiverMatrix/tenant-invalid
+=== RUN   TestInferenceReceiverMatrix/request-missing
+=== RUN   TestInferenceReceiverMatrix/request-duplicate
+=== RUN   TestInferenceReceiverMatrix/request-invalid
+--- PASS: TestInferenceReceiverMatrix (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/valid-forged-actor (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/list-denied (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/write-denied (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/governance-version-denied (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/wrong-caller (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/tenant-mismatch (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/empty-request-tenant (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/tenant-missing (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/tenant-duplicate (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/tenant-invalid (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/request-missing (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/request-duplicate (0.00s)
+    --- PASS: TestInferenceReceiverMatrix/request-invalid (0.00s)
+PASS
+ok  	github.com/zhangzhe-ctrl/ani-model-service/internal/server	0.040s
+go: downloading github.com/jackc/pgx/v5 v5.7.6
+go: downloading github.com/jackc/pgpassfile v1.0.0
+go: downloading github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761
+go: downloading golang.org/x/crypto v0.54.0
+=== RUN   TestCatalogListContract
+2026/09/19 16:27:40 ERROR model catalog query failed error="context deadline exceeded" request_id=""
+--- PASS: TestCatalogListContract (0.00s)
+=== RUN   TestGetModelVersionRequiresTrustedTenant
+--- PASS: TestGetModelVersionRequiresTrustedTenant (0.00s)
+=== RUN   TestGetModelVersionChecksReadyArtifact
+--- PASS: TestGetModelVersionChecksReadyArtifact (0.00s)
+=== RUN   TestGetModelVersionByExternalReference
+--- PASS: TestGetModelVersionByExternalReference (0.00s)
+=== RUN   TestGetModelVersionRejectsMixedSelectors
+--- PASS: TestGetModelVersionRejectsMixedSelectors (0.00s)
+PASS
+ok  	github.com/zhangzhe-ctrl/ani-model-service/internal/service	0.006s
+go: downloading go.uber.org/automaxprocs v1.6.0
+go: downloading github.com/fsnotify/fsnotify v1.10.1
+go: downloading github.com/jackc/puddle/v2 v2.2.2
+go: downloading github.com/minio/minio-go/v7 v7.2.0
+go: downloading gopkg.in/ini.v1 v1.67.2
+go: downloading github.com/dustin/go-humanize v1.0.1
+go: downloading github.com/klauspost/compress v1.19.1
+go: downloading github.com/klauspost/crc32 v1.3.0
+go: downloading github.com/minio/crc64nvme v1.1.1
+go: downloading github.com/minio/md5-simd v1.1.2
+go: downloading github.com/zeebo/xxh3 v1.1.0
+go: downloading go.yaml.in/yaml/v3 v3.0.4
+go: downloading github.com/rs/xid v1.6.0
+go: downloading github.com/tinylib/msgp v1.6.1
+go: downloading github.com/klauspost/cpuid/v2 v2.2.11
+go: downloading github.com/philhofer/fwd v1.2.0
+# github.com/zhangzhe-ctrl/ani-model-service/cmd/ani-model-service [github.com/zhangzhe-ctrl/ani-model-service/cmd/ani-model-service.test]
+cmd/ani-model-service/catalog.go:70:118: cannot use db (variable of interface type postgres.DBTX) as *pgxpool.Pool value in argument to postgres.NewModelStore: need type assertion
+FAIL	github.com/zhangzhe-ctrl/ani-model-service/cmd/ani-model-service [build failed]
+FAIL

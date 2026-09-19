@@ -1,0 +1,17 @@
+PASS cross-tenant code=NotFound
+PASS nonexistent code=NotFound
+PASS tenant-mismatch code=PermissionDenied
+PASS empty-request-tenant code=PermissionDenied
+PASS x-ani-tenant-id-missing code=Unauthenticated
+PASS x-ani-tenant-id-duplicate code=Unauthenticated
+PASS x-ani-tenant-id-invalid code=Unauthenticated
+PASS x-ani-tenant-id-zero code=Unauthenticated
+PASS x-ani-tenant-id-noncanonical code=Unauthenticated
+PASS x-ani-request-id-missing code=Unauthenticated
+PASS x-ani-request-id-duplicate code=Unauthenticated
+PASS x-ani-request-id-invalid code=Unauthenticated
+PASS x-ani-request-id-zero code=Unauthenticated
+PASS x-ani-request-id-noncanonical code=Unauthenticated
+PASS forged-actor-read code=OK
+PASS inference-list-denied code=PermissionDenied
+PASS inference-write-denied code=PermissionDenied

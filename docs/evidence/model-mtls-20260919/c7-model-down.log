@@ -1,0 +1,1 @@
+PASS outage elapsed=3.002546612s error=get model version: rpc error: code = DeadlineExceeded desc = context deadline exceeded while waiting for connections to become ready

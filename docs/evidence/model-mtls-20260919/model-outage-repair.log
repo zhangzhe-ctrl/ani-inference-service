@@ -1,0 +1,17 @@
+=== RUN   TestGetModelVersionRequiresTrustedTenant
+--- PASS: TestGetModelVersionRequiresTrustedTenant (0.00s)
+=== RUN   TestGetModelVersionChecksReadyArtifact
+--- PASS: TestGetModelVersionChecksReadyArtifact (0.00s)
+=== RUN   TestGetModelVersionByExternalReference
+--- PASS: TestGetModelVersionByExternalReference (0.00s)
+=== RUN   TestGetModelVersionRejectsMixedSelectors
+--- PASS: TestGetModelVersionRejectsMixedSelectors (0.00s)
+=== RUN   TestGetModelVersionDistinguishesStoreFailure
+=== RUN   TestGetModelVersionDistinguishesStoreFailure/missing
+=== RUN   TestGetModelVersionDistinguishesStoreFailure/database-timeout
+2026/09/19 16:40:59 ERROR model version query failed error="context deadline exceeded" request_id=""
+--- PASS: TestGetModelVersionDistinguishesStoreFailure (0.00s)
+    --- PASS: TestGetModelVersionDistinguishesStoreFailure/missing (0.00s)
+    --- PASS: TestGetModelVersionDistinguishesStoreFailure/database-timeout (0.00s)
+PASS
+ok  	github.com/zhangzhe-ctrl/ani-model-service/internal/service	0.005s

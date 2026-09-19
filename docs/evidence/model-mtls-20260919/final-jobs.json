@@ -1,0 +1,3254 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c2-final-a\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-5a30185f3c1c\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:42:25Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "d26e4c28-a9eb-4b6a-a518-cbd36f76498a",
+                    "batch.kubernetes.io/job-name": "c2-final-a",
+                    "controller-uid": "d26e4c28-a9eb-4b6a-a518-cbd36f76498a",
+                    "job-name": "c2-final-a"
+                },
+                "name": "c2-final-a",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054277",
+                "uid": "d26e4c28-a9eb-4b6a-a518-cbd36f76498a"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "d26e4c28-a9eb-4b6a-a518-cbd36f76498a"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "d26e4c28-a9eb-4b6a-a518-cbd36f76498a",
+                            "batch.kubernetes.io/job-name": "c2-final-a",
+                            "controller-uid": "d26e4c28-a9eb-4b6a-a518-cbd36f76498a",
+                            "job-name": "c2-final-a"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-5a30185f3c1c",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:42:28Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:28Z",
+                        "lastTransitionTime": "2026-09-19T08:42:28Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:28Z",
+                        "lastTransitionTime": "2026-09-19T08:42:28Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:42:25Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c2-final-b\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"22222222-2222-4222-8222-222222222222\",\"-version\",\"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/b.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-5a30185f3c1c\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:42:31Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "509e919e-6753-45f6-b1b6-e2cb17610a6a",
+                    "batch.kubernetes.io/job-name": "c2-final-b",
+                    "controller-uid": "509e919e-6753-45f6-b1b6-e2cb17610a6a",
+                    "job-name": "c2-final-b"
+                },
+                "name": "c2-final-b",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054344",
+                "uid": "509e919e-6753-45f6-b1b6-e2cb17610a6a"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "509e919e-6753-45f6-b1b6-e2cb17610a6a"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "509e919e-6753-45f6-b1b6-e2cb17610a6a",
+                            "batch.kubernetes.io/job-name": "c2-final-b",
+                            "controller-uid": "509e919e-6753-45f6-b1b6-e2cb17610a6a",
+                            "job-name": "c2-final-b"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "22222222-2222-4222-8222-222222222222",
+                                    "-version",
+                                    "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/b.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-5a30185f3c1c",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:42:34Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:34Z",
+                        "lastTransitionTime": "2026-09-19T08:42:34Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:34Z",
+                        "lastTransitionTime": "2026-09-19T08:42:34Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:42:31Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c2-tenant-a\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:35:14Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "ef3d2ed8-941b-45fe-835e-aa9ca7cda4d5",
+                    "batch.kubernetes.io/job-name": "c2-tenant-a",
+                    "controller-uid": "ef3d2ed8-941b-45fe-835e-aa9ca7cda4d5",
+                    "job-name": "c2-tenant-a"
+                },
+                "name": "c2-tenant-a",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051176",
+                "uid": "ef3d2ed8-941b-45fe-835e-aa9ca7cda4d5"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "ef3d2ed8-941b-45fe-835e-aa9ca7cda4d5"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "ef3d2ed8-941b-45fe-835e-aa9ca7cda4d5",
+                            "batch.kubernetes.io/job-name": "c2-tenant-a",
+                            "controller-uid": "ef3d2ed8-941b-45fe-835e-aa9ca7cda4d5",
+                            "job-name": "c2-tenant-a"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:35:21Z",
+                        "lastTransitionTime": "2026-09-19T08:35:21Z",
+                        "message": "Job has reached the specified backoff limit",
+                        "reason": "BackoffLimitExceeded",
+                        "status": "True",
+                        "type": "FailureTarget"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:35:21Z",
+                        "lastTransitionTime": "2026-09-19T08:35:21Z",
+                        "message": "Job has reached the specified backoff limit",
+                        "reason": "BackoffLimitExceeded",
+                        "status": "True",
+                        "type": "Failed"
+                    }
+                ],
+                "failed": 1,
+                "ready": 0,
+                "startTime": "2026-09-19T08:35:14Z",
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c2-tenant-a-fqdn\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:36:19Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "ef1a0823-3d1e-478a-b648-bb4fb4906310",
+                    "batch.kubernetes.io/job-name": "c2-tenant-a-fqdn",
+                    "controller-uid": "ef1a0823-3d1e-478a-b648-bb4fb4906310",
+                    "job-name": "c2-tenant-a-fqdn"
+                },
+                "name": "c2-tenant-a-fqdn",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051522",
+                "uid": "ef1a0823-3d1e-478a-b648-bb4fb4906310"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "ef1a0823-3d1e-478a-b648-bb4fb4906310"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "ef1a0823-3d1e-478a-b648-bb4fb4906310",
+                            "batch.kubernetes.io/job-name": "c2-tenant-a-fqdn",
+                            "controller-uid": "ef1a0823-3d1e-478a-b648-bb4fb4906310",
+                            "job-name": "c2-tenant-a-fqdn"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:36:22Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:22Z",
+                        "lastTransitionTime": "2026-09-19T08:36:22Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:23Z",
+                        "lastTransitionTime": "2026-09-19T08:36:23Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:36:20Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c2-tenant-b\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"22222222-2222-4222-8222-222222222222\",\"-version\",\"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/b.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:36:24Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "2e4dc607-d797-4bb9-a01b-41ac75dc5ec3",
+                    "batch.kubernetes.io/job-name": "c2-tenant-b",
+                    "controller-uid": "2e4dc607-d797-4bb9-a01b-41ac75dc5ec3",
+                    "job-name": "c2-tenant-b"
+                },
+                "name": "c2-tenant-b",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051584",
+                "uid": "2e4dc607-d797-4bb9-a01b-41ac75dc5ec3"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "2e4dc607-d797-4bb9-a01b-41ac75dc5ec3"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "2e4dc607-d797-4bb9-a01b-41ac75dc5ec3",
+                            "batch.kubernetes.io/job-name": "c2-tenant-b",
+                            "controller-uid": "2e4dc607-d797-4bb9-a01b-41ac75dc5ec3",
+                            "job-name": "c2-tenant-b"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "22222222-2222-4222-8222-222222222222",
+                                    "-version",
+                                    "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/b.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:36:27Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:27Z",
+                        "lastTransitionTime": "2026-09-19T08:36:27Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:27Z",
+                        "lastTransitionTime": "2026-09-19T08:36:27Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:36:24Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c3-c5-c6-matrix\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"matrix\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:36:29Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "64281298-bdab-4804-8654-d7a0bf8ca8ff",
+                    "batch.kubernetes.io/job-name": "c3-c5-c6-matrix",
+                    "controller-uid": "64281298-bdab-4804-8654-d7a0bf8ca8ff",
+                    "job-name": "c3-c5-c6-matrix"
+                },
+                "name": "c3-c5-c6-matrix",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051649",
+                "uid": "64281298-bdab-4804-8654-d7a0bf8ca8ff"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "64281298-bdab-4804-8654-d7a0bf8ca8ff"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "64281298-bdab-4804-8654-d7a0bf8ca8ff",
+                            "batch.kubernetes.io/job-name": "c3-c5-c6-matrix",
+                            "controller-uid": "64281298-bdab-4804-8654-d7a0bf8ca8ff",
+                            "job-name": "c3-c5-c6-matrix"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "matrix",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:36:33Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:33Z",
+                        "lastTransitionTime": "2026-09-19T08:36:33Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:33Z",
+                        "lastTransitionTime": "2026-09-19T08:36:33Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:36:29Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c3-final-matrix\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"matrix\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-5a30185f3c1c\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:42:37Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "4dba0b22-81ba-40ce-8f51-e9d6ea5b69fc",
+                    "batch.kubernetes.io/job-name": "c3-final-matrix",
+                    "controller-uid": "4dba0b22-81ba-40ce-8f51-e9d6ea5b69fc",
+                    "job-name": "c3-final-matrix"
+                },
+                "name": "c3-final-matrix",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054413",
+                "uid": "4dba0b22-81ba-40ce-8f51-e9d6ea5b69fc"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "4dba0b22-81ba-40ce-8f51-e9d6ea5b69fc"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "4dba0b22-81ba-40ce-8f51-e9d6ea5b69fc",
+                            "batch.kubernetes.io/job-name": "c3-final-matrix",
+                            "controller-uid": "4dba0b22-81ba-40ce-8f51-e9d6ea5b69fc",
+                            "job-name": "c3-final-matrix"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "matrix",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-5a30185f3c1c",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:42:41Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:41Z",
+                        "lastTransitionTime": "2026-09-19T08:42:41Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:41Z",
+                        "lastTransitionTime": "2026-09-19T08:42:41Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:42:37Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c4-c5-governance\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"governance\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"governance-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:36:53Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "052aad10-3b7a-4458-92a8-4ae8f9f00f55",
+                    "batch.kubernetes.io/job-name": "c4-c5-governance",
+                    "controller-uid": "052aad10-3b7a-4458-92a8-4ae8f9f00f55",
+                    "job-name": "c4-c5-governance"
+                },
+                "name": "c4-c5-governance",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051921",
+                "uid": "052aad10-3b7a-4458-92a8-4ae8f9f00f55"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "052aad10-3b7a-4458-92a8-4ae8f9f00f55"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "052aad10-3b7a-4458-92a8-4ae8f9f00f55",
+                            "batch.kubernetes.io/job-name": "c4-c5-governance",
+                            "controller-uid": "052aad10-3b7a-4458-92a8-4ae8f9f00f55",
+                            "job-name": "c4-c5-governance"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "governance",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "governance-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:36:57Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:57Z",
+                        "lastTransitionTime": "2026-09-19T08:36:57Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:57Z",
+                        "lastTransitionTime": "2026-09-19T08:36:57Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:36:53Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c4-c5-no-cert\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"no-cert\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:36:35Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "ce273d98-71b2-4767-b77b-ce04f5a047ba",
+                    "batch.kubernetes.io/job-name": "c4-c5-no-cert",
+                    "controller-uid": "ce273d98-71b2-4767-b77b-ce04f5a047ba",
+                    "job-name": "c4-c5-no-cert"
+                },
+                "name": "c4-c5-no-cert",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051718",
+                "uid": "ce273d98-71b2-4767-b77b-ce04f5a047ba"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "ce273d98-71b2-4767-b77b-ce04f5a047ba"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "ce273d98-71b2-4767-b77b-ce04f5a047ba",
+                            "batch.kubernetes.io/job-name": "c4-c5-no-cert",
+                            "controller-uid": "ce273d98-71b2-4767-b77b-ce04f5a047ba",
+                            "job-name": "c4-c5-no-cert"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "no-cert",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:36:39Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:39Z",
+                        "lastTransitionTime": "2026-09-19T08:36:39Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:39Z",
+                        "lastTransitionTime": "2026-09-19T08:36:39Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:36:35Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c4-c5-untrusted\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"untrusted\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"untrusted-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:36:41Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "ea739169-216c-4f58-80ea-7e070719dd85",
+                    "batch.kubernetes.io/job-name": "c4-c5-untrusted",
+                    "controller-uid": "ea739169-216c-4f58-80ea-7e070719dd85",
+                    "job-name": "c4-c5-untrusted"
+                },
+                "name": "c4-c5-untrusted",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051788",
+                "uid": "ea739169-216c-4f58-80ea-7e070719dd85"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "ea739169-216c-4f58-80ea-7e070719dd85"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "ea739169-216c-4f58-80ea-7e070719dd85",
+                            "batch.kubernetes.io/job-name": "c4-c5-untrusted",
+                            "controller-uid": "ea739169-216c-4f58-80ea-7e070719dd85",
+                            "job-name": "c4-c5-untrusted"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "untrusted",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "untrusted-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:36:45Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:45Z",
+                        "lastTransitionTime": "2026-09-19T08:36:45Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:45Z",
+                        "lastTransitionTime": "2026-09-19T08:36:45Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:36:41Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c4-c5-wrong-service\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"wrong-service\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"wrong-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:36:47Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "8c4010d6-7cab-42fe-8894-3cd63a5eea53",
+                    "batch.kubernetes.io/job-name": "c4-c5-wrong-service",
+                    "controller-uid": "8c4010d6-7cab-42fe-8894-3cd63a5eea53",
+                    "job-name": "c4-c5-wrong-service"
+                },
+                "name": "c4-c5-wrong-service",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2051852",
+                "uid": "8c4010d6-7cab-42fe-8894-3cd63a5eea53"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "8c4010d6-7cab-42fe-8894-3cd63a5eea53"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "8c4010d6-7cab-42fe-8894-3cd63a5eea53",
+                            "batch.kubernetes.io/job-name": "c4-c5-wrong-service",
+                            "controller-uid": "8c4010d6-7cab-42fe-8894-3cd63a5eea53",
+                            "job-name": "c4-c5-wrong-service"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "wrong-service",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "wrong-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:36:51Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:51Z",
+                        "lastTransitionTime": "2026-09-19T08:36:51Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:36:51Z",
+                        "lastTransitionTime": "2026-09-19T08:36:51Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:36:47Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c7-model-down\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"outage\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:37:12Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "78f4847a-c4e8-4118-963e-73f3caf7bc17",
+                    "batch.kubernetes.io/job-name": "c7-model-down",
+                    "controller-uid": "78f4847a-c4e8-4118-963e-73f3caf7bc17",
+                    "job-name": "c7-model-down"
+                },
+                "name": "c7-model-down",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2052098",
+                "uid": "78f4847a-c4e8-4118-963e-73f3caf7bc17"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "78f4847a-c4e8-4118-963e-73f3caf7bc17"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "78f4847a-c4e8-4118-963e-73f3caf7bc17",
+                            "batch.kubernetes.io/job-name": "c7-model-down",
+                            "controller-uid": "78f4847a-c4e8-4118-963e-73f3caf7bc17",
+                            "job-name": "c7-model-down"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "outage",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:37:19Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:19Z",
+                        "lastTransitionTime": "2026-09-19T08:37:19Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:19Z",
+                        "lastTransitionTime": "2026-09-19T08:37:19Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:37:12Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c7-model-recovered\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:37:22Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "403dc6bf-4591-4112-8fe9-701951230f50",
+                    "batch.kubernetes.io/job-name": "c7-model-recovered",
+                    "controller-uid": "403dc6bf-4591-4112-8fe9-701951230f50",
+                    "job-name": "c7-model-recovered"
+                },
+                "name": "c7-model-recovered",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2052219",
+                "uid": "403dc6bf-4591-4112-8fe9-701951230f50"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "403dc6bf-4591-4112-8fe9-701951230f50"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "403dc6bf-4591-4112-8fe9-701951230f50",
+                            "batch.kubernetes.io/job-name": "c7-model-recovered",
+                            "controller-uid": "403dc6bf-4591-4112-8fe9-701951230f50",
+                            "job-name": "c7-model-recovered"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:37:26Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:26Z",
+                        "lastTransitionTime": "2026-09-19T08:37:26Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:26Z",
+                        "lastTransitionTime": "2026-09-19T08:37:26Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:37:22Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c7-postgres-down\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"outage\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:37:30Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "2ad3da42-a5ac-4613-89cf-fa7d8c20cc39",
+                    "batch.kubernetes.io/job-name": "c7-postgres-down",
+                    "controller-uid": "2ad3da42-a5ac-4613-89cf-fa7d8c20cc39",
+                    "job-name": "c7-postgres-down"
+                },
+                "name": "c7-postgres-down",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2052325",
+                "uid": "2ad3da42-a5ac-4613-89cf-fa7d8c20cc39"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "2ad3da42-a5ac-4613-89cf-fa7d8c20cc39"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "2ad3da42-a5ac-4613-89cf-fa7d8c20cc39",
+                            "batch.kubernetes.io/job-name": "c7-postgres-down",
+                            "controller-uid": "2ad3da42-a5ac-4613-89cf-fa7d8c20cc39",
+                            "job-name": "c7-postgres-down"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "outage",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:37:34Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:34Z",
+                        "lastTransitionTime": "2026-09-19T08:37:34Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:34Z",
+                        "lastTransitionTime": "2026-09-19T08:37:34Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:37:30Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c7-postgres-final-down\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"outage\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\"],\"image\":\"ani-probe:inf-model-mtls-20260919-5a30185f3c1c\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:42:44Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "911664e8-4424-436d-8dc9-34a644d6945c",
+                    "batch.kubernetes.io/job-name": "c7-postgres-final-down",
+                    "controller-uid": "911664e8-4424-436d-8dc9-34a644d6945c",
+                    "job-name": "c7-postgres-final-down"
+                },
+                "name": "c7-postgres-final-down",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054527",
+                "uid": "911664e8-4424-436d-8dc9-34a644d6945c"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "911664e8-4424-436d-8dc9-34a644d6945c"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "911664e8-4424-436d-8dc9-34a644d6945c",
+                            "batch.kubernetes.io/job-name": "c7-postgres-final-down",
+                            "controller-uid": "911664e8-4424-436d-8dc9-34a644d6945c",
+                            "job-name": "c7-postgres-final-down"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "outage",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-5a30185f3c1c",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:42:49Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:49Z",
+                        "lastTransitionTime": "2026-09-19T08:42:49Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:42:49Z",
+                        "lastTransitionTime": "2026-09-19T08:42:49Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:42:44Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c7-postgres-final-recovered\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-5a30185f3c1c\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:42:58Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "5c085dfb-6be5-44f6-aa67-9b78c433de85",
+                    "batch.kubernetes.io/job-name": "c7-postgres-final-recovered",
+                    "controller-uid": "5c085dfb-6be5-44f6-aa67-9b78c433de85",
+                    "job-name": "c7-postgres-final-recovered"
+                },
+                "name": "c7-postgres-final-recovered",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054687",
+                "uid": "5c085dfb-6be5-44f6-aa67-9b78c433de85"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "5c085dfb-6be5-44f6-aa67-9b78c433de85"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "5c085dfb-6be5-44f6-aa67-9b78c433de85",
+                            "batch.kubernetes.io/job-name": "c7-postgres-final-recovered",
+                            "controller-uid": "5c085dfb-6be5-44f6-aa67-9b78c433de85",
+                            "job-name": "c7-postgres-final-recovered"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-5a30185f3c1c",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:43:01Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:43:01Z",
+                        "lastTransitionTime": "2026-09-19T08:43:01Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:43:01Z",
+                        "lastTransitionTime": "2026-09-19T08:43:01Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:42:58Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c7-postgres-recovered\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:37:42Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "639287da-46fd-4276-bd7b-e5f5d7e1743d",
+                    "batch.kubernetes.io/job-name": "c7-postgres-recovered",
+                    "controller-uid": "639287da-46fd-4276-bd7b-e5f5d7e1743d",
+                    "job-name": "c7-postgres-recovered"
+                },
+                "name": "c7-postgres-recovered",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2052496",
+                "uid": "639287da-46fd-4276-bd7b-e5f5d7e1743d"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "639287da-46fd-4276-bd7b-e5f5d7e1743d"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "639287da-46fd-4276-bd7b-e5f5d7e1743d",
+                            "batch.kubernetes.io/job-name": "c7-postgres-recovered",
+                            "controller-uid": "639287da-46fd-4276-bd7b-e5f5d7e1743d",
+                            "job-name": "c7-postgres-recovered"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:37:48Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:48Z",
+                        "lastTransitionTime": "2026-09-19T08:37:48Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:37:48Z",
+                        "lastTransitionTime": "2026-09-19T08:37:48Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:37:42Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c8-final-loaded\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\",\"-server-serial\",\"30A690E7D9AA15C9C43E3C1A59D17C802A0B872D\"],\"image\":\"ani-probe:inf-model-mtls-20260919-5a30185f3c1c\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:43:05Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "9c3bf432-4e5c-4546-bf51-0bec3425e7ee",
+                    "batch.kubernetes.io/job-name": "c8-final-loaded",
+                    "controller-uid": "9c3bf432-4e5c-4546-bf51-0bec3425e7ee",
+                    "job-name": "c8-final-loaded"
+                },
+                "name": "c8-final-loaded",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2054764",
+                "uid": "9c3bf432-4e5c-4546-bf51-0bec3425e7ee"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "9c3bf432-4e5c-4546-bf51-0bec3425e7ee"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "9c3bf432-4e5c-4546-bf51-0bec3425e7ee",
+                            "batch.kubernetes.io/job-name": "c8-final-loaded",
+                            "controller-uid": "9c3bf432-4e5c-4546-bf51-0bec3425e7ee",
+                            "job-name": "c8-final-loaded"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json",
+                                    "-server-serial",
+                                    "30A690E7D9AA15C9C43E3C1A59D17C802A0B872D"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-5a30185f3c1c",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:43:09Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:43:09Z",
+                        "lastTransitionTime": "2026-09-19T08:43:09Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:43:09Z",
+                        "lastTransitionTime": "2026-09-19T08:43:09Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:43:05Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c8-new-certificates\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\",\"-server-serial\",\"30A690E7D9AA15C9C43E3C1A59D17C802A0B872D\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:37:57Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "27b98cfb-bc75-424b-8693-6635e282908a",
+                    "batch.kubernetes.io/job-name": "c8-new-certificates",
+                    "controller-uid": "27b98cfb-bc75-424b-8693-6635e282908a",
+                    "job-name": "c8-new-certificates"
+                },
+                "name": "c8-new-certificates",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2052713",
+                "uid": "27b98cfb-bc75-424b-8693-6635e282908a"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "27b98cfb-bc75-424b-8693-6635e282908a"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "27b98cfb-bc75-424b-8693-6635e282908a",
+                            "batch.kubernetes.io/job-name": "c8-new-certificates",
+                            "controller-uid": "27b98cfb-bc75-424b-8693-6635e282908a",
+                            "job-name": "c8-new-certificates"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json",
+                                    "-server-serial",
+                                    "30A690E7D9AA15C9C43E3C1A59D17C802A0B872D"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:38:00Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:38:00Z",
+                        "lastTransitionTime": "2026-09-19T08:38:00Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:38:00Z",
+                        "lastTransitionTime": "2026-09-19T08:38:00Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:37:57Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        },
+        {
+            "apiVersion": "batch/v1",
+            "kind": "Job",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"c8-rolling-confirm\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"activeDeadlineSeconds\":60,\"backoffLimit\":0,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"-address\",\"model.inf-model-mtls-20260919.svc.cluster.local.:19090\",\"-mode\",\"read\",\"-tenant\",\"11111111-1111-4111-8111-111111111111\",\"-version\",\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2\",\"-timeout\",\"3s\",\"-expected\",\"/expected/a.json\",\"-server-serial\",\"30A690E7D9AA15C9C43E3C1A59D17C802A0B872D\"],\"image\":\"ani-probe:inf-model-mtls-20260919-0ab7efbecc25\",\"imagePullPolicy\":\"Never\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"128Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"runAsNonRoot\":true,\"runAsUser\":65532},\"volumeMounts\":[{\"mountPath\":\"/identity\",\"name\":\"identity\",\"readOnly\":true},{\"mountPath\":\"/trust\",\"name\":\"trust\",\"readOnly\":true},{\"mountPath\":\"/expected\",\"name\":\"expected\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"volumes\":[{\"name\":\"identity\",\"secret\":{\"secretName\":\"inference-tls\"}},{\"configMap\":{\"name\":\"trust\"},\"name\":\"trust\"},{\"configMap\":{\"name\":\"expected\"},\"name\":\"expected\"}]}}}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:40:19Z",
+                "generation": 1,
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "757234c5-10a3-4abe-becf-c59fd7a59b3a",
+                    "batch.kubernetes.io/job-name": "c8-rolling-confirm",
+                    "controller-uid": "757234c5-10a3-4abe-becf-c59fd7a59b3a",
+                    "job-name": "c8-rolling-confirm"
+                },
+                "name": "c8-rolling-confirm",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2053537",
+                "uid": "757234c5-10a3-4abe-becf-c59fd7a59b3a"
+            },
+            "spec": {
+                "activeDeadlineSeconds": 60,
+                "backoffLimit": 0,
+                "completionMode": "NonIndexed",
+                "completions": 1,
+                "manualSelector": false,
+                "parallelism": 1,
+                "podReplacementPolicy": "TerminatingOrFailed",
+                "selector": {
+                    "matchLabels": {
+                        "batch.kubernetes.io/controller-uid": "757234c5-10a3-4abe-becf-c59fd7a59b3a"
+                    }
+                },
+                "suspend": false,
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "batch.kubernetes.io/controller-uid": "757234c5-10a3-4abe-becf-c59fd7a59b3a",
+                            "batch.kubernetes.io/job-name": "c8-rolling-confirm",
+                            "controller-uid": "757234c5-10a3-4abe-becf-c59fd7a59b3a",
+                            "job-name": "c8-rolling-confirm"
+                        }
+                    },
+                    "spec": {
+                        "automountServiceAccountToken": false,
+                        "containers": [
+                            {
+                                "args": [
+                                    "-address",
+                                    "model.inf-model-mtls-20260919.svc.cluster.local.:19090",
+                                    "-mode",
+                                    "read",
+                                    "-tenant",
+                                    "11111111-1111-4111-8111-111111111111",
+                                    "-version",
+                                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+                                    "-timeout",
+                                    "3s",
+                                    "-expected",
+                                    "/expected/a.json",
+                                    "-server-serial",
+                                    "30A690E7D9AA15C9C43E3C1A59D17C802A0B872D"
+                                ],
+                                "image": "ani-probe:inf-model-mtls-20260919-0ab7efbecc25",
+                                "imagePullPolicy": "Never",
+                                "name": "probe",
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "128Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "50m",
+                                        "memory": "32Mi"
+                                    }
+                                },
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false,
+                                    "capabilities": {
+                                        "drop": [
+                                            "ALL"
+                                        ]
+                                    },
+                                    "runAsNonRoot": true,
+                                    "runAsUser": 65532
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/identity",
+                                        "name": "identity",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/trust",
+                                        "name": "trust",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "mountPath": "/expected",
+                                        "name": "expected",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Never",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "name": "identity",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "inference-tls"
+                                }
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "trust"
+                                },
+                                "name": "trust"
+                            },
+                            {
+                                "configMap": {
+                                    "defaultMode": 420,
+                                    "name": "expected"
+                                },
+                                "name": "expected"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "completionTime": "2026-09-19T08:40:22Z",
+                "conditions": [
+                    {
+                        "lastProbeTime": "2026-09-19T08:40:22Z",
+                        "lastTransitionTime": "2026-09-19T08:40:22Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "SuccessCriteriaMet"
+                    },
+                    {
+                        "lastProbeTime": "2026-09-19T08:40:22Z",
+                        "lastTransitionTime": "2026-09-19T08:40:22Z",
+                        "message": "Reached expected number of succeeded pods",
+                        "reason": "CompletionsReached",
+                        "status": "True",
+                        "type": "Complete"
+                    }
+                ],
+                "ready": 0,
+                "startTime": "2026-09-19T08:40:19Z",
+                "succeeded": 1,
+                "terminating": 0,
+                "uncountedTerminatedPods": {}
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

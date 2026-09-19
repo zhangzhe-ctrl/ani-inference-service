@@ -1,0 +1,371 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Certificate\",\"metadata\":{\"annotations\":{},\"name\":\"governance-tls\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"dnsNames\":[\"ani-governance\"],\"duration\":\"168h\",\"issuerRef\":{\"kind\":\"Issuer\",\"name\":\"lab-ca\"},\"privateKey\":{\"algorithm\":\"ECDSA\",\"rotationPolicy\":\"Always\",\"size\":256},\"renewBefore\":\"24h\",\"secretName\":\"governance-tls\",\"usages\":[\"digital signature\",\"client auth\"]}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:25Z",
+                "generation": 1,
+                "name": "governance-tls",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050425",
+                "uid": "3c2832ec-31d9-411f-9fc3-22e3514362b0"
+            },
+            "spec": {
+                "dnsNames": [
+                    "ani-governance"
+                ],
+                "duration": "168h",
+                "issuerRef": {
+                    "kind": "Issuer",
+                    "name": "lab-ca"
+                },
+                "privateKey": {
+                    "algorithm": "ECDSA",
+                    "rotationPolicy": "Always",
+                    "size": 256
+                },
+                "renewBefore": "24h",
+                "secretName": "governance-tls",
+                "usages": [
+                    "digital signature",
+                    "client auth"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:25Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 1,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2026-09-26T08:33:25Z",
+                "notBefore": "2026-09-19T08:33:25Z",
+                "renewalTime": "2026-09-25T08:33:25Z",
+                "revision": 1
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Certificate\",\"metadata\":{\"annotations\":{},\"name\":\"inference-tls\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"dnsNames\":[\"ani-inference-service\"],\"duration\":\"168h\",\"issuerRef\":{\"kind\":\"Issuer\",\"name\":\"lab-ca\"},\"privateKey\":{\"algorithm\":\"ECDSA\",\"rotationPolicy\":\"Always\",\"size\":256},\"renewBefore\":\"24h\",\"secretName\":\"inference-tls\",\"usages\":[\"digital signature\",\"client auth\"]}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:25Z",
+                "generation": 2,
+                "name": "inference-tls",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2052566",
+                "uid": "ebe147ed-a770-422d-a02a-0cef4b0e5bb4"
+            },
+            "spec": {
+                "dnsNames": [
+                    "ani-inference-service"
+                ],
+                "duration": "192h",
+                "issuerRef": {
+                    "kind": "Issuer",
+                    "name": "lab-ca"
+                },
+                "privateKey": {
+                    "algorithm": "ECDSA",
+                    "rotationPolicy": "Always",
+                    "size": 256
+                },
+                "renewBefore": "24h",
+                "secretName": "inference-tls",
+                "usages": [
+                    "digital signature",
+                    "client auth"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:37:52Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 2,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2026-09-27T08:37:52Z",
+                "notBefore": "2026-09-19T08:37:52Z",
+                "renewalTime": "2026-09-26T08:37:52Z",
+                "revision": 2
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Certificate\",\"metadata\":{\"annotations\":{},\"name\":\"lab-root\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"commonName\":\"lab-root\",\"duration\":\"168h\",\"isCA\":true,\"issuerRef\":{\"kind\":\"Issuer\",\"name\":\"selfsigned\"},\"privateKey\":{\"algorithm\":\"ECDSA\",\"rotationPolicy\":\"Always\",\"size\":256},\"renewBefore\":\"24h\",\"secretName\":\"lab-root\",\"usages\":[\"cert sign\",\"crl sign\"]}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:23Z",
+                "generation": 1,
+                "name": "lab-root",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050289",
+                "uid": "e7ffcda6-6809-4427-af68-bc1e7f8bd79b"
+            },
+            "spec": {
+                "commonName": "lab-root",
+                "duration": "168h",
+                "isCA": true,
+                "issuerRef": {
+                    "kind": "Issuer",
+                    "name": "selfsigned"
+                },
+                "privateKey": {
+                    "algorithm": "ECDSA",
+                    "rotationPolicy": "Always",
+                    "size": 256
+                },
+                "renewBefore": "24h",
+                "secretName": "lab-root",
+                "usages": [
+                    "cert sign",
+                    "crl sign"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:23Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 1,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2026-09-26T08:33:23Z",
+                "notBefore": "2026-09-19T08:33:23Z",
+                "renewalTime": "2026-09-25T08:33:23Z",
+                "revision": 1
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Certificate\",\"metadata\":{\"annotations\":{},\"name\":\"model-tls\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"dnsNames\":[\"ani-model-service\"],\"duration\":\"168h\",\"issuerRef\":{\"kind\":\"Issuer\",\"name\":\"lab-ca\"},\"privateKey\":{\"algorithm\":\"ECDSA\",\"rotationPolicy\":\"Always\",\"size\":256},\"renewBefore\":\"24h\",\"secretName\":\"model-tls\",\"usages\":[\"digital signature\",\"server auth\"]}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:25Z",
+                "generation": 2,
+                "name": "model-tls",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2052540",
+                "uid": "526535ee-4e14-40cf-91f6-baf46214bd2e"
+            },
+            "spec": {
+                "dnsNames": [
+                    "ani-model-service"
+                ],
+                "duration": "192h",
+                "issuerRef": {
+                    "kind": "Issuer",
+                    "name": "lab-ca"
+                },
+                "privateKey": {
+                    "algorithm": "ECDSA",
+                    "rotationPolicy": "Always",
+                    "size": 256
+                },
+                "renewBefore": "24h",
+                "secretName": "model-tls",
+                "usages": [
+                    "digital signature",
+                    "server auth"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:37:52Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 2,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2026-09-27T08:37:52Z",
+                "notBefore": "2026-09-19T08:37:52Z",
+                "renewalTime": "2026-09-26T08:37:52Z",
+                "revision": 2
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Certificate\",\"metadata\":{\"annotations\":{},\"name\":\"untrusted-root\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"commonName\":\"untrusted-root\",\"duration\":\"168h\",\"isCA\":true,\"issuerRef\":{\"kind\":\"Issuer\",\"name\":\"selfsigned\"},\"privateKey\":{\"algorithm\":\"ECDSA\",\"rotationPolicy\":\"Always\",\"size\":256},\"renewBefore\":\"24h\",\"secretName\":\"untrusted-root\",\"usages\":[\"cert sign\",\"crl sign\"]}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:23Z",
+                "generation": 1,
+                "name": "untrusted-root",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050290",
+                "uid": "39c23aa4-b103-4284-a8ac-3a17eda1df21"
+            },
+            "spec": {
+                "commonName": "untrusted-root",
+                "duration": "168h",
+                "isCA": true,
+                "issuerRef": {
+                    "kind": "Issuer",
+                    "name": "selfsigned"
+                },
+                "privateKey": {
+                    "algorithm": "ECDSA",
+                    "rotationPolicy": "Always",
+                    "size": 256
+                },
+                "renewBefore": "24h",
+                "secretName": "untrusted-root",
+                "usages": [
+                    "cert sign",
+                    "crl sign"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:23Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 1,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2026-09-26T08:33:23Z",
+                "notBefore": "2026-09-19T08:33:23Z",
+                "renewalTime": "2026-09-25T08:33:23Z",
+                "revision": 1
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Certificate\",\"metadata\":{\"annotations\":{},\"name\":\"untrusted-tls\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"dnsNames\":[\"ani-inference-service\"],\"duration\":\"168h\",\"issuerRef\":{\"kind\":\"Issuer\",\"name\":\"untrusted-ca\"},\"privateKey\":{\"algorithm\":\"ECDSA\",\"rotationPolicy\":\"Always\",\"size\":256},\"renewBefore\":\"24h\",\"secretName\":\"untrusted-tls\",\"usages\":[\"digital signature\",\"client auth\"]}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:25Z",
+                "generation": 1,
+                "name": "untrusted-tls",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050428",
+                "uid": "15c6ff6c-a3d9-4c3d-9159-4f1ccebf1910"
+            },
+            "spec": {
+                "dnsNames": [
+                    "ani-inference-service"
+                ],
+                "duration": "168h",
+                "issuerRef": {
+                    "kind": "Issuer",
+                    "name": "untrusted-ca"
+                },
+                "privateKey": {
+                    "algorithm": "ECDSA",
+                    "rotationPolicy": "Always",
+                    "size": 256
+                },
+                "renewBefore": "24h",
+                "secretName": "untrusted-tls",
+                "usages": [
+                    "digital signature",
+                    "client auth"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:25Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 1,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2026-09-26T08:33:25Z",
+                "notBefore": "2026-09-19T08:33:25Z",
+                "renewalTime": "2026-09-25T08:33:25Z",
+                "revision": 1
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cert-manager.io/v1\",\"kind\":\"Certificate\",\"metadata\":{\"annotations\":{},\"name\":\"wrong-tls\",\"namespace\":\"inf-model-mtls-20260919\"},\"spec\":{\"dnsNames\":[\"wrong-service\"],\"duration\":\"168h\",\"issuerRef\":{\"kind\":\"Issuer\",\"name\":\"lab-ca\"},\"privateKey\":{\"algorithm\":\"ECDSA\",\"rotationPolicy\":\"Always\",\"size\":256},\"renewBefore\":\"24h\",\"secretName\":\"wrong-tls\",\"usages\":[\"digital signature\",\"client auth\"]}}\n"
+                },
+                "creationTimestamp": "2026-09-19T08:33:25Z",
+                "generation": 1,
+                "name": "wrong-tls",
+                "namespace": "inf-model-mtls-20260919",
+                "resourceVersion": "2050427",
+                "uid": "3acdbe7d-60c7-468a-9e50-92563d4e4e90"
+            },
+            "spec": {
+                "dnsNames": [
+                    "wrong-service"
+                ],
+                "duration": "168h",
+                "issuerRef": {
+                    "kind": "Issuer",
+                    "name": "lab-ca"
+                },
+                "privateKey": {
+                    "algorithm": "ECDSA",
+                    "rotationPolicy": "Always",
+                    "size": 256
+                },
+                "renewBefore": "24h",
+                "secretName": "wrong-tls",
+                "usages": [
+                    "digital signature",
+                    "client auth"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2026-09-19T08:33:25Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 1,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2026-09-26T08:33:25Z",
+                "notBefore": "2026-09-19T08:33:25Z",
+                "renewalTime": "2026-09-25T08:33:25Z",
+                "revision": 1
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}
