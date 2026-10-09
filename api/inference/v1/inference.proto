@@ -6,6 +6,7 @@ option go_package = "github.com/zhangzhe-ctrl/ani-inference-service/api/inferenc
 
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
+import "accelerator/integration/v1/owner_gpu_attachment.proto";
 
 message ResourceSpec {
   map<string, string> requests = 1;
@@ -111,6 +112,15 @@ message CreateInferenceServiceRequest {
   ModelArtifact model_artifact = 7;
   EngineSpec engine = 8;
   string served_model_name = 9;
+  // Internal Governance command only; never supplied by a public client.
+  accelerator.integration.v1.GpuOwnerCreateAttachment gpu_owner_attachment = 10;
+  // Entire original charge vector, including non-GPU business charges.
+  repeated OriginalQuotaCharge original_charges = 11;
+}
+message OriginalQuotaCharge {
+  string charge_id = 1;
+  string quota_code = 2;
+  int64 original_units = 3;
 }
 message UpdateInferenceServiceRequest {
   string request_id = 1;
@@ -126,10 +136,24 @@ message UpdateInferenceServiceRequest {
   string model_version_id = 11;
 }
 message ServiceCommandRequest { string request_id = 1; string resource_id = 2; int64 expected_generation = 3; }
+message DeleteInferenceServiceRequest {
+  string request_id = 1;
+  string resource_id = 2;
+  // Legacy direct records require generation. Governance commands do not.
+  int64 expected_generation = 3;
+  accelerator.integration.v1.GpuOwnerDeleteAttachment gpu_owner_attachment = 4;
+  repeated OriginalQuotaCharge original_charges = 5;
+}
 message GetInferenceServiceRequest { string resource_id = 1; }
 message ListInferenceServicesRequest { int32 page_size = 1; string page_token = 2; }
 message ListInferenceServicesResponse { repeated InferenceService services = 1; string next_page_token = 2; }
-message OperationResponse { InferenceService resource = 1; Operation operation = 2; }
+message OperationResponse {
+  InferenceService resource = 1;
+  Operation operation = 2;
+  // Command accepted in the same transaction as its immutable context.
+  // This is never evidence of workload readiness or physical release.
+  accelerator.integration.v1.DurableOwnerAck durable_owner_ack = 3;
+}
 message GetOperationRequest { string operation_id = 1; }
 message ListOperationsRequest {
   int32 page_size = 1;
@@ -146,7 +170,7 @@ service InferenceServiceManager {
   rpc StartInferenceService(ServiceCommandRequest) returns (OperationResponse);
   rpc StopInferenceService(ServiceCommandRequest) returns (OperationResponse);
   rpc RestartInferenceService(ServiceCommandRequest) returns (OperationResponse);
-  rpc DeleteInferenceService(ServiceCommandRequest) returns (OperationResponse);
+  rpc DeleteInferenceService(DeleteInferenceServiceRequest) returns (OperationResponse);
   rpc GetOperation(GetOperationRequest) returns (Operation);
   rpc ListOperations(ListOperationsRequest) returns (ListOperationsResponse);
 }

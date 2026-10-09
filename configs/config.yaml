@@ -8,3 +8,16 @@ server:
     addr: "${SERVER_ADMIN_ADDR:127.0.0.1:19091}"
     timeout: "${SERVER_ADMIN_TIMEOUT:1s}"
   shutdown_timeout: "${SERVER_SHUTDOWN_TIMEOUT:5s}"
+managed_gpu:
+  receiver:
+    address: "${GOVERNANCE_RECEIVER_GRPC_ADDR:}"
+    ca_file: "${GOVERNANCE_RECEIVER_CA_FILE:}"
+    cert_file: "${GOVERNANCE_RECEIVER_CERT_FILE:}"
+    key_file: "${GOVERNANCE_RECEIVER_KEY_FILE:}"
+  refund:
+    address: "${GOVERNANCE_QUOTA_GRPC_ADDR:}"
+    ca_file: "${GOVERNANCE_QUOTA_CA_FILE:}"
+    cert_file: "${GOVERNANCE_QUOTA_CERT_FILE:}"
+    key_file: "${GOVERNANCE_QUOTA_KEY_FILE:}"
+    server_name: "${GOVERNANCE_QUOTA_SERVER_NAME:}"
+    timeout: "${GOVERNANCE_QUOTA_TIMEOUT:5s}"

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	kratoshttp "github.com/go-kratos/kratos/v3/transport/http"
 
 	inferencev1 "github.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1"
+	"github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/gpu"
 	inferencebiz "github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/inference"
 	"github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/work"
 	"github.com/zhangzhe-ctrl/ani-inference-service/internal/server"
@@ -18,8 +20,17 @@ import (
 )
 
 func buildAppWithAllDependenciesAndBackground(bc *inferencev1.Bootstrap, logger *slog.Logger, create service.CreateUseCase, read inferencebiz.ReadUseCase, command inferencebiz.CommandUseCase, update inferencebiz.UpdateUseCase, background ...kratosTransport.Server) (*kratos.App, error) {
+	return buildAppWithAllDependenciesAndManagedGPU(bc, logger, create, read, command, update, nil, background...)
+}
+
+func buildAppWithAllDependenciesAndManagedGPU(bc *inferencev1.Bootstrap, logger *slog.Logger, create service.CreateUseCase, read inferencebiz.ReadUseCase, command inferencebiz.CommandUseCase, update inferencebiz.UpdateUseCase, refund gpu.RefundReporter, background ...kratosTransport.Server) (*kratos.App, error) {
 	if err := bc.Validate(); err != nil {
 		return nil, err
+	}
+	if _, enabled, err := governanceRefundConfig(bc.GetManagedGpu()); err != nil {
+		return nil, err
+	} else if enabled && refund == nil {
+		return nil, errors.New("managed GPU receiver requires the real refund reporter")
 	}
 	readiness := server.NewReadiness()
 	observability, err := server.NewObservability(Name, Version, readiness)
@@ -32,12 +43,23 @@ func buildAppWithAllDependenciesAndBackground(bc *inferencev1.Bootstrap, logger 
 			observability.SetMetricsSource(sourceProvider.MetricsSource())
 		}
 	}
+	owner := service.NewInferenceServerWithAll(create, read, command, update)
+	owner.SetManagedGPURefundReporter(refund)
 	grpcServer := server.NewGRPCServer(bc.Server.Grpc, middlewares...)
-	inferencev1.RegisterInferenceServiceManagerServer(grpcServer, service.NewInferenceServerWithAll(create, read, command, update))
+	inferencev1.RegisterInferenceServiceManagerServer(grpcServer, owner)
+	managedServer, err := configuredGovernanceGRPCServer(bc.Server.Grpc, bc.GetManagedGpu(), owner, middlewares...)
+	if err != nil {
+		_ = observability.Shutdown(context.Background())
+		return nil, err
+	}
+	readyOnStart := readyOnStartForBackground(background)
+	if managedServer != nil {
+		background = append(background, managedServer)
+	}
 	referenceReader, _ := read.(inferencebiz.ModelReferenceReader)
 	inferencev1.RegisterModelReferenceServiceServer(grpcServer, service.NewModelReferenceServer(referenceReader))
 	adminServer := server.NewAdminServer(bc.Server.Admin, readiness, observability.Gatherer(), middlewares...)
-	return newApp(logger, grpcServer, adminServer, readiness, observability, bc.Server.ShutdownTimeout.AsDuration(), readyOnStartForBackground(background), background...), nil
+	return newApp(logger, grpcServer, adminServer, readiness, observability, bc.Server.ShutdownTimeout.AsDuration(), readyOnStart, background...), nil
 }
 
 func readyOnStartForBackground(background []kratosTransport.Server) bool {

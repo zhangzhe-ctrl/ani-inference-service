@@ -122,6 +122,38 @@ func (u *UpdateUseCase) Update(ctx context.Context, in inferencebiz.UpdateInput)
 	if current.DesiredState != "running" {
 		return nil, inferencebiz.ErrInvalidState
 	}
+	managedResource, managedErr := q.GetManagedGPUResource(ctx, GetManagedGPUResourceParams{TenantID: tenant, ResourceID: serviceID})
+	managed := managedErr == nil
+	if managedErr != nil && !errors.Is(managedErr, pgx.ErrNoRows) {
+		return nil, managedErr
+	}
+	if managed {
+		if managedResource.Closing {
+			return nil, fmt.Errorf("%w: managed GPU resource has a closing intent", inferencebiz.ErrInvalidState)
+		}
+		var original gpubiz.RefundContext
+		if err := json.Unmarshal(managedResource.OriginalContext, &original); err != nil {
+			return nil, err
+		}
+		if original.Plan == nil || in.Resources.GPU == nil || *original.Plan.Request != *in.Resources.GPU {
+			return nil, fmt.Errorf("%w: managed GPU selection changes require Governance admission", inferencebiz.ErrInvalidState)
+		}
+		if err := gpubiz.ValidateTopology(original.Plan.Request, in.Replicas, in.RuntimeMode, in.WorkerReplicas); err != nil {
+			return nil, fmt.Errorf("%w: %s", inferencebiz.ErrInvalidState, err)
+		}
+		currentSpec, err := q.GetSpec(ctx, GetSpecParams{TenantID: tenant, ServiceID: serviceID, Generation: current.DesiredGeneration})
+		if err != nil {
+			return nil, err
+		}
+		if currentSpec.Replicas != in.Replicas || currentSpec.RuntimeMode != in.RuntimeMode || currentSpec.WorkerReplicas != in.WorkerReplicas {
+			return nil, fmt.Errorf("%w: managed GPU topology changes require Governance admission", inferencebiz.ErrInvalidState)
+		}
+		gpuPlanJSON, err = json.Marshal(original.Plan)
+		if err != nil {
+			return nil, err
+		}
+		gpuPlanDigest = original.Plan.ResolutionDigest
+	}
 	// The nested resource.gpu object is the complete accelerator intent for a
 	// generation. An omitted object therefore means that this desired
 	// generation has no GPU placement; never inherit a previous generation's
@@ -159,8 +191,10 @@ func (u *UpdateUseCase) Update(ctx context.Context, in inferencebiz.UpdateInput)
 		}
 		return nil, err
 	}
-	if err := q.InsertQuotaReservation(ctx, InsertQuotaReservationParams{TenantID: tenant, ServiceID: serviceID, OperationID: opID, Generation: target, ReservationID: "pending-" + opID.String(), RequestedResources: resourcesJSON}); err != nil {
-		return nil, err
+	if !managed {
+		if err := q.InsertQuotaReservation(ctx, InsertQuotaReservationParams{TenantID: tenant, ServiceID: serviceID, OperationID: opID, Generation: target, ReservationID: "pending-" + opID.String(), RequestedResources: resourcesJSON}); err != nil {
+			return nil, err
+		}
 	}
 	if err := q.UpsertResourceWork(ctx, UpsertResourceWorkParams{TenantID: tenant, ServiceID: serviceID, DirtyVersion: target}); err != nil {
 		return nil, err

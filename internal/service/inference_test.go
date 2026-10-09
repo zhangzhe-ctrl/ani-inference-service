@@ -110,16 +110,14 @@ func TestCreateRejectsLegacyGPUMapWithoutNestedRequest(t *testing.T) {
 	}
 }
 
-func TestCreateCarriesNestedGpuRequest(t *testing.T) {
+func TestCreateRejectsNestedGpuRequestWithoutGovernanceAttachment(t *testing.T) {
 	f := &fakeCreate{}
 	req := &inferencev1.CreateInferenceServiceRequest{RequestId: "gpu-1", Name: "gpu", ModelVersionId: "mv", Replicas: 1, Engine: validEngine(), Resource: &inferencev1.ResourceSpec{Gpu: &inferencev1.GpuRequest{
 		ClusterId: "10000000-0000-4000-8000-000000000001", PoolId: "10000000-0000-4000-8000-000000000002", ProfileId: "10000000-0000-4000-8000-000000000003", ProfileVersion: 1, Replicas: 1, DevicesPerReplica: 1, ContainerName: "kserve-container",
 	}}}
-	if _, err := NewInferenceServer(f).CreateInferenceService(WithTenantID(context.Background(), "tenant-a"), req); err != nil {
-		t.Fatal(err)
-	}
-	if f.in.Resources.GPU == nil || f.in.Resources.GPU.ProfileID != req.GetResource().GetGpu().GetProfileId() {
-		t.Fatalf("gpu request not propagated: %#v", f.in.Resources.GPU)
+	_, err := NewInferenceServer(f).CreateInferenceService(WithTenantID(context.Background(), "tenant-a"), req)
+	if status.Code(err) != codes.InvalidArgument || f.in.Resources.GPU != nil {
+		t.Fatalf("unmanaged GPU accepted: input=%+v error=%v", f.in, err)
 	}
 }
 

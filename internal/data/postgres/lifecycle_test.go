@@ -46,6 +46,8 @@ func lifecycleDatabase(t *testing.T) (context.Context, *pgxpool.Pool, uuid.UUID,
 		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cleanupCancel()
 		for _, statement := range []string{
+			"DELETE FROM inference_managed_gpu_commands WHERE tenant_id=$1",
+			"DELETE FROM inference_managed_gpu_resources WHERE tenant_id=$1",
 			"UPDATE inference_services SET current_operation_id=NULL WHERE tenant_id=$1",
 			"DELETE FROM inference_audit_events WHERE tenant_id=$1",
 			"DELETE FROM inference_idempotency_requests WHERE tenant_id=$1",

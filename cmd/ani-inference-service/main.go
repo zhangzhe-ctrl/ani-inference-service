@@ -25,6 +25,7 @@ import (
 	ctrlmanager "sigs.k8s.io/controller-runtime/pkg/manager"
 
 	inferencev1 "github.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1"
+	"github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/gpu"
 	inferencebiz "github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/inference"
 	bizreconcile "github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/reconcile"
 	"github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/work"
@@ -84,6 +85,7 @@ func run(logger *slog.Logger) error {
 	var read inferencebiz.ReadUseCase
 	var command inferencebiz.CommandUseCase
 	var update inferencebiz.UpdateUseCase
+	var refund gpu.RefundReporter
 	if strings.TrimSpace(os.Getenv("ANI_DATABASE_DSN")) == "" {
 		return errors.New("ANI_DATABASE_DSN is required")
 	}
@@ -106,6 +108,12 @@ func run(logger *slog.Logger) error {
 		}
 		defer pool.Close()
 		repo := postgres.NewRepository(pool)
+		var closeRefund func()
+		refund, closeRefund, err = configuredGovernanceRefundReporter(bc.GetManagedGpu(), repo)
+		if err != nil {
+			return err
+		}
+		defer closeRefund()
 		create = postgres.NewCreateUseCase(repo)
 		var closeModel func()
 		var modelErr error
@@ -129,7 +137,7 @@ func run(logger *slog.Logger) error {
 		}
 		background = servers
 	}
-	app, err := buildAppWithAllDependenciesAndBackground(&bc, logger, create, read, command, update, background...)
+	app, err := buildAppWithAllDependenciesAndManagedGPU(&bc, logger, create, read, command, update, refund, background...)
 	if err != nil {
 		return fmt.Errorf("build app: %w", err)
 	}

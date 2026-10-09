@@ -25,6 +25,9 @@ func (u *CommandUseCase) Command(ctx context.Context, in inferencebiz.CommandInp
 	if u == nil || u.repo == nil || u.repo.pool == nil {
 		return nil, errors.New("nil postgres command repository")
 	}
+	if in.ManagedGPU != nil {
+		return u.acceptManagedGPUDelete(ctx, in)
+	}
 	tenant, err := parseUUID("tenant_id", in.TenantID, false)
 	if err != nil {
 		return nil, err
@@ -78,6 +81,17 @@ func (u *CommandUseCase) Command(ctx context.Context, in inferencebiz.CommandInp
 	if current.DesiredGeneration != in.ExpectedGeneration || current.DeletedAt.Valid {
 		return nil, inferencebiz.ErrGenerationConflict
 	}
+	managedState, err := q.GetManagedGPUState(ctx, GetManagedGPUStateParams{TenantID: tenant, ResourceID: serviceID})
+	if err != nil {
+		return nil, err
+	}
+	managed, closing := managedState.Managed, managedState.Closing
+	if managed && in.Kind == "delete" {
+		return nil, fmt.Errorf("%w: managed GPU DELETE requires a trusted Governance attachment", inferencebiz.ErrInvalidState)
+	}
+	if closing && (in.Kind == "start" || in.Kind == "restart") {
+		return nil, fmt.Errorf("%w: managed GPU resource has a closing intent", inferencebiz.ErrInvalidState)
+	}
 	if err := validCommandState(in.Kind, current.DesiredState); err != nil {
 		return nil, err
 	}
@@ -130,7 +144,7 @@ func (u *CommandUseCase) Command(ctx context.Context, in inferencebiz.CommandInp
 		}
 		return nil, err
 	}
-	if in.Kind == "start" || in.Kind == "restart" {
+	if !managed && (in.Kind == "start" || in.Kind == "restart") {
 		if err := q.InsertQuotaReservation(ctx, InsertQuotaReservationParams{TenantID: tenant, ServiceID: serviceID, OperationID: opID, Generation: targetGeneration, ReservationID: "pending-" + opID.String(), RequestedResources: requestedResources}); err != nil {
 			return nil, err
 		}

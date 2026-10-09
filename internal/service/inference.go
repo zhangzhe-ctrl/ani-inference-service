@@ -177,6 +177,20 @@ type InferenceServer struct {
 	read    inferencebiz.ReadUseCase
 	command inferencebiz.CommandUseCase
 	update  inferencebiz.UpdateUseCase
+	refund  gpubiz.RefundReporter
+}
+
+// SetManagedGPURefundReporter wires the completion reporter into the real
+// service. The lifecycle owner invokes it with an already durable completion
+// notification; no public RPC or normal lifecycle step calls this method.
+func (s *InferenceServer) SetManagedGPURefundReporter(reporter gpubiz.RefundReporter) {
+	s.refund = reporter
+}
+func (s *InferenceServer) ReportManagedGPUCompletion(ctx context.Context, notification gpubiz.ReleaseNotification) (gpubiz.ReleaseReceipt, error) {
+	if s == nil || s.refund == nil {
+		return gpubiz.ReleaseReceipt{}, errors.New("managed GPU refund reporter is not configured")
+	}
+	return s.refund.ReportQuotaRelease(ctx, notification)
 }
 
 func NewInferenceServer(create ...CreateUseCase) *InferenceServer {
@@ -309,10 +323,6 @@ func (s *InferenceServer) StopInferenceService(ctx context.Context, req *inferen
 
 func (s *InferenceServer) RestartInferenceService(ctx context.Context, req *inferencev1.ServiceCommandRequest) (*inferencev1.OperationResponse, error) {
 	return s.acceptCommand(ctx, "restart", req)
-}
-
-func (s *InferenceServer) DeleteInferenceService(ctx context.Context, req *inferencev1.ServiceCommandRequest) (*inferencev1.OperationResponse, error) {
-	return s.acceptCommand(ctx, "delete", req)
 }
 
 func (s *InferenceServer) acceptCommand(ctx context.Context, kind string, req *inferencev1.ServiceCommandRequest) (*inferencev1.OperationResponse, error) {
@@ -497,6 +507,15 @@ func (s *InferenceServer) CreateInferenceService(ctx context.Context, req *infer
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		}
 	}
+	var managed *inferencebiz.ManagedGPUCommand
+	if normalized.GPU != nil {
+		managed, err = managedCreate(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+	} else if req.GetGpuOwnerAttachment() != nil || len(req.GetOriginalCharges()) != 0 {
+		return nil, status.Error(codes.InvalidArgument, "GPU attachment requires resource.gpu")
+	}
 	canonical := proto.Clone(req).(*inferencev1.CreateInferenceServiceRequest)
 	canonical.Resource = &inferencev1.ResourceSpec{Requests: normalized.Requests, Limits: normalized.Limits, Gpu: gpuProto(normalized.GPU)}
 	canonical.Runtime = &inferencev1.RuntimeSpec{Mode: inferencev1.RuntimeMode_RUNTIME_MODE_DEPLOYMENT, WorkerReplicas: workers}
@@ -519,7 +538,13 @@ func (s *InferenceServer) CreateInferenceService(ctx context.Context, req *infer
 	if s.create == nil {
 		return nil, status.Error(codes.FailedPrecondition, "inference create use case is not configured")
 	}
-	out, err := s.create.Create(ctx, CreateInput{TenantID: tenantID, RequestID: req.GetRequestId(), Actor: Actor(ctx), Name: req.GetName(), ModelVersionID: req.GetModelVersionId(), ArtifactProvider: artifactProvider, ArtifactRef: artifactRef, ArtifactSHA256: artifactSHA, ImageRef: image, ServedModelName: req.GetServedModelName(), EngineRuntime: engineRuntime, RuntimeProvider: provider, CommandArgv: commandArgv, Resources: normalized, Replicas: req.GetReplicas(), WorkerReplicas: workers, RuntimeMode: mode, Endpoint: endpointInput(req.GetRuntime().GetEndpoint()), RequestHash: hashBytes(encoded)})
+	in := CreateInput{TenantID: tenantID, RequestID: req.GetRequestId(), Actor: Actor(ctx), Name: req.GetName(), ModelVersionID: req.GetModelVersionId(), ArtifactProvider: artifactProvider, ArtifactRef: artifactRef, ArtifactSHA256: artifactSHA, ImageRef: image, ServedModelName: req.GetServedModelName(), EngineRuntime: engineRuntime, RuntimeProvider: provider, CommandArgv: commandArgv, Resources: normalized, Replicas: req.GetReplicas(), WorkerReplicas: workers, RuntimeMode: mode, Endpoint: endpointInput(req.GetRuntime().GetEndpoint()), RequestHash: hashBytes(encoded), ManagedGPU: managed}
+	if managed != nil {
+		in.GPUPlan, in.GPUPlanDigest = managed.Context.Plan, managed.Context.Plan.ResolutionDigest
+		in.RequestHash = hashBytes(managed.Payload)
+		in.Actor = req.GetGpuOwnerAttachment().GetActor().GetType() + ":" + req.GetGpuOwnerAttachment().GetActor().GetId()
+	}
+	out, err := s.create.Create(ctx, in)
 	if err != nil {
 		if errors.Is(err, inferencebiz.ErrIdempotencyConflict) {
 			return nil, status.Error(codes.AlreadyExists, err.Error())

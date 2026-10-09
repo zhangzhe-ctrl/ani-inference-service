@@ -42,7 +42,7 @@ type InferenceServiceManagerClient interface {
 	StartInferenceService(ctx context.Context, in *ServiceCommandRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	StopInferenceService(ctx context.Context, in *ServiceCommandRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	RestartInferenceService(ctx context.Context, in *ServiceCommandRequest, opts ...grpc.CallOption) (*OperationResponse, error)
-	DeleteInferenceService(ctx context.Context, in *ServiceCommandRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	DeleteInferenceService(ctx context.Context, in *DeleteInferenceServiceRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	GetOperation(ctx context.Context, in *GetOperationRequest, opts ...grpc.CallOption) (*Operation, error)
 	ListOperations(ctx context.Context, in *ListOperationsRequest, opts ...grpc.CallOption) (*ListOperationsResponse, error)
 }
@@ -125,7 +125,7 @@ func (c *inferenceServiceManagerClient) RestartInferenceService(ctx context.Cont
 	return out, nil
 }
 
-func (c *inferenceServiceManagerClient) DeleteInferenceService(ctx context.Context, in *ServiceCommandRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+func (c *inferenceServiceManagerClient) DeleteInferenceService(ctx context.Context, in *DeleteInferenceServiceRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OperationResponse)
 	err := c.cc.Invoke(ctx, InferenceServiceManager_DeleteInferenceService_FullMethodName, in, out, cOpts...)
@@ -166,7 +166,7 @@ type InferenceServiceManagerServer interface {
 	StartInferenceService(context.Context, *ServiceCommandRequest) (*OperationResponse, error)
 	StopInferenceService(context.Context, *ServiceCommandRequest) (*OperationResponse, error)
 	RestartInferenceService(context.Context, *ServiceCommandRequest) (*OperationResponse, error)
-	DeleteInferenceService(context.Context, *ServiceCommandRequest) (*OperationResponse, error)
+	DeleteInferenceService(context.Context, *DeleteInferenceServiceRequest) (*OperationResponse, error)
 	GetOperation(context.Context, *GetOperationRequest) (*Operation, error)
 	ListOperations(context.Context, *ListOperationsRequest) (*ListOperationsResponse, error)
 	mustEmbedUnimplementedInferenceServiceManagerServer()
@@ -200,7 +200,7 @@ func (UnimplementedInferenceServiceManagerServer) StopInferenceService(context.C
 func (UnimplementedInferenceServiceManagerServer) RestartInferenceService(context.Context, *ServiceCommandRequest) (*OperationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RestartInferenceService not implemented")
 }
-func (UnimplementedInferenceServiceManagerServer) DeleteInferenceService(context.Context, *ServiceCommandRequest) (*OperationResponse, error) {
+func (UnimplementedInferenceServiceManagerServer) DeleteInferenceService(context.Context, *DeleteInferenceServiceRequest) (*OperationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteInferenceService not implemented")
 }
 func (UnimplementedInferenceServiceManagerServer) GetOperation(context.Context, *GetOperationRequest) (*Operation, error) {
@@ -358,7 +358,7 @@ func _InferenceServiceManager_RestartInferenceService_Handler(srv interface{}, c
 }
 
 func _InferenceServiceManager_DeleteInferenceService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ServiceCommandRequest)
+	in := new(DeleteInferenceServiceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -370,7 +370,7 @@ func _InferenceServiceManager_DeleteInferenceService_Handler(srv interface{}, ct
 		FullMethod: InferenceServiceManager_DeleteInferenceService_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InferenceServiceManagerServer).DeleteInferenceService(ctx, req.(*ServiceCommandRequest))
+		return srv.(InferenceServiceManagerServer).DeleteInferenceService(ctx, req.(*DeleteInferenceServiceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

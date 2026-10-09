@@ -23,6 +23,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	lwsv1 "sigs.k8s.io/lws/api/leaderworkerset/v1"
+	volcanov1 "volcano.sh/apis/pkg/apis/scheduling/v1beta1"
 )
 
 const (
@@ -76,7 +77,7 @@ func (e *KServeRuntimeExecutor) ApplyRuntime(ctx context.Context, op inferencebi
 	if err != nil {
 		return err
 	}
-	if e.RequireQuota && !spec.QuotaReserved {
+	if e.RequireQuota && !spec.ManagedGPU && !spec.QuotaReserved {
 		return errors.New("quota reservation must be confirmed before runtime apply")
 	}
 	_, err = e.applyKServe(ctx, spec, kserveBindingForSpec(spec))
@@ -172,7 +173,7 @@ func (e *KServeRuntimeExecutor) Ensure(ctx context.Context, desired bizreconcile
 	spec.TenantID, spec.ServiceID, spec.Generation = desired.TenantID, desired.ServiceID, desired.Generation
 	switch spec.DesiredState {
 	case "", "running":
-		if e.RequireQuota && !spec.QuotaReserved {
+		if e.RequireQuota && !spec.ManagedGPU && !spec.QuotaReserved {
 			return bizreconcile.Observation{}, errors.New("quota reservation must be confirmed before runtime apply")
 		}
 		if err := e.applyCR(ctx, spec.RuntimeSpec, spec.DesiredState, controlBindingForSpec(spec)); err != nil {
@@ -209,7 +210,7 @@ func (e *KServeRuntimeExecutor) Ensure(ctx context.Context, desired bizreconcile
 }
 
 func (e *KServeRuntimeExecutor) applyKServe(ctx context.Context, spec DesiredRuntime, expected *RuntimeBinding) (bizreconcile.Observation, error) {
-	obj, err := renderKServeRuntime(spec.RuntimeSpec)
+	obj, err := RenderKServeRuntime(spec.RuntimeSpec)
 	if err != nil {
 		return bizreconcile.Observation{}, err
 	}
@@ -315,7 +316,9 @@ func (e *KServeRuntimeExecutor) observeKServe(ctx context.Context, spec DesiredR
 	return observation, nil
 }
 
-func renderKServeRuntime(spec RuntimeSpec) (*unstructured.Unstructured, error) {
+// RenderKServeRuntime exposes the same frozen-spec renderer used by the
+// runtime executor for owner handoff and deterministic projection checks.
+func RenderKServeRuntime(spec RuntimeSpec) (*unstructured.Unstructured, error) {
 	switch spec.RuntimeMode {
 	case "", "deployment":
 		return renderKServeInferenceService(spec)
@@ -332,6 +335,11 @@ func renderKServeRuntime(spec RuntimeSpec) (*unstructured.Unstructured, error) {
 // silently fall back to a CPU pod when the plan is missing.
 func validateGPUPlan(spec RuntimeSpec) error {
 	request := spec.Resources.GPU
+	if spec.ManagedGPU {
+		if err := gpu.ValidateManagedPlan(spec.GPUPlan, request); err != nil {
+			return fmt.Errorf("invalid accepted Governance GPU plan: %w", err)
+		}
+	}
 	if request == nil {
 		if spec.GPUPlan != nil {
 			return errors.New("GPU plan requires a GPU request")
@@ -366,8 +374,11 @@ func applyGPUPlanToPod(spec RuntimeSpec, pod *corev1.PodSpec, expectedContainer 
 		return nil, fmt.Errorf("GPU plan container must be %q", expectedContainer)
 	}
 	runtimeFragment := spec.GPUPlan.Runtime
+	if pod.SchedulerName != "" && pod.SchedulerName != runtimeFragment.SchedulerName {
+		return nil, errors.New("GPU plan conflicts with pod scheduler")
+	}
 	pod.SchedulerName = runtimeFragment.SchedulerName
-	if len(runtimeFragment.NodeLabels) > 0 {
+	if pod.NodeSelector == nil && len(runtimeFragment.NodeLabels) > 0 {
 		pod.NodeSelector = make(map[string]string, len(runtimeFragment.NodeLabels))
 	}
 	for _, item := range runtimeFragment.NodeLabels {
@@ -380,6 +391,9 @@ func applyGPUPlanToPod(spec RuntimeSpec, pod *corev1.PodSpec, expectedContainer 
 		pod.NodeSelector[item.Key] = item.Value
 	}
 	if runtimeFragment.RuntimeClassName != "" {
+		if pod.RuntimeClassName != nil && *pod.RuntimeClassName != runtimeFragment.RuntimeClassName {
+			return nil, errors.New("GPU plan conflicts with pod runtime class")
+		}
 		pod.RuntimeClassName = &runtimeFragment.RuntimeClassName
 	}
 	container := &pod.Containers[0]
@@ -394,7 +408,14 @@ func applyGPUPlanToPod(spec RuntimeSpec, pod *corev1.PodSpec, expectedContainer 
 		if err != nil {
 			return nil, fmt.Errorf("invalid GPU plan limit %q for %s: %w", item.Value, item.Key, err)
 		}
-		container.Resources.Limits[corev1.ResourceName(item.Key)] = quantity
+		key := corev1.ResourceName(item.Key)
+		if current, ok := container.Resources.Limits[key]; ok && current.Cmp(quantity) != 0 {
+			return nil, fmt.Errorf("GPU plan conflicts with existing container limit %q", item.Key)
+		}
+		if current, ok := container.Resources.Requests[key]; ok && current.Cmp(quantity) != 0 {
+			return nil, fmt.Errorf("GPU plan conflicts with existing container request %q", item.Key)
+		}
+		container.Resources.Limits[key] = quantity
 	}
 	annotations := make(map[string]string, len(runtimeFragment.PodAnnotations))
 	for _, item := range runtimeFragment.PodAnnotations {
@@ -406,6 +427,15 @@ func applyGPUPlanToPod(spec RuntimeSpec, pod *corev1.PodSpec, expectedContainer 
 		}
 		annotations[item.Key] = item.Value
 	}
+	// Volcano v1.12.1's normal-Pod PodGroup controller reads this exact pod
+	// annotation into PodGroup.spec.queue. Queue is frozen in the same plan.
+	if runtimeFragment.QueueName == "" {
+		return nil, errors.New("GPU plan queue is required")
+	}
+	if value, exists := annotations[volcanov1.QueueNameAnnotationKey]; exists && value != runtimeFragment.QueueName {
+		return nil, errors.New("GPU queue annotation conflicts with frozen plan")
+	}
+	annotations[volcanov1.QueueNameAnnotationKey] = runtimeFragment.QueueName
 	return annotations, nil
 }
 
@@ -518,6 +548,9 @@ func renderKServeInferenceService(spec RuntimeSpec) (*unstructured.Unstructured,
 
 func renderKServeLLMInferenceService(spec RuntimeSpec) (*unstructured.Unstructured, error) {
 	spec = normalizeEndpoint(spec)
+	if spec.ManagedGPU || spec.Resources.GPU != nil {
+		return nil, errors.New("GPU LWS rendering requires a synchronous pre-create projection hook; KServe v0.16 drops required queue and pod annotations")
+	}
 	if spec.Name == "" || spec.Namespace == "" || spec.ServiceID == "" || spec.TenantID == "" || spec.Image == "" {
 		return nil, errors.New("name, namespace, tenant ID, service ID and image are required")
 	}
@@ -564,7 +597,7 @@ func renderKServeLLMInferenceService(spec RuntimeSpec) (*unstructured.Unstructur
 			return nil, err
 		}
 	}
-	gpuAnnotations, err := applyGPUPlanToPod(spec, &pod, "main")
+	_, err = applyGPUPlanToPod(spec, &pod, "main")
 	if err != nil {
 		return nil, err
 	}
@@ -608,11 +641,6 @@ func renderKServeLLMInferenceService(spec RuntimeSpec) (*unstructured.Unstructur
 	}
 	applyGPUPlanToPredictor(serviceSpec["template"].(map[string]interface{}), &pod, nil)
 	applyGPUPlanToPredictor(serviceSpec["worker"].(map[string]interface{}), &pod, nil)
-	if len(gpuAnnotations) > 0 {
-		// WorkloadSpec owns pod annotations; Template and Worker are raw
-		// corev1.PodSpec values and therefore have no metadata field.
-		serviceSpec["annotations"] = mapStringInterface(gpuAnnotations)
-	}
 	// KServe v0.16 requires parallelism whenever worker is present. The
 	// existing API models WorkerReplicas as workers excluding the leader, so a
 	// pipeline-parallel group of worker+leader pods preserves that topology.

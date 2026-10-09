@@ -113,6 +113,11 @@ func (s *OperationStore) CurrentOperation(ctx context.Context, item work.Item) (
 		return inferencebiz.OperationContext{}, err
 	}
 	op := inferencebiz.OperationContext{TenantID: row.TenantID.String(), ServiceID: row.ServiceID.String(), ID: row.ID.String(), Kind: row.Kind, Phase: inferencebiz.OperationPhase(row.Phase), Step: row.Step, Attempt: row.Attempt, TargetGeneration: row.TargetGeneration, LeaseToken: item.LeaseToken}
+	managed, err := New(s.pool).GetManagedGPUState(ctx, GetManagedGPUStateParams{TenantID: row.TenantID, ResourceID: row.ServiceID})
+	if err != nil {
+		return inferencebiz.OperationContext{}, err
+	}
+	op.ManagedGPU = managed.Managed
 	// Load accelerator state from the immutable target generation. This is
 	// intentionally best-effort for delete/legacy rows that have no spec; a
 	// malformed persisted GPU snapshot remains an error so a worker cannot

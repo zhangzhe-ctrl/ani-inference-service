@@ -6,9 +6,11 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	integrationv1 "github.com/zhangzhe-ctrl/ani-accelerator-service/api/gen/go/accelerator/integration/v1"
 	inferencev1 "github.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1"
 	gpubiz "github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/gpu"
 	inferencebiz "github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/inference"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // CreateUseCase adapts the admitted command to the durable PostgreSQL
@@ -57,6 +59,23 @@ func (u *CreateUseCase) Create(ctx context.Context, in inferencebiz.CreateInput)
 		return nil, err
 	}
 	serviceID, operationID := uuid.New(), uuid.New()
+	idempotencyKey := in.RequestID
+	var responseSnapshot []byte
+	if in.ManagedGPU != nil {
+		idempotencyKey = "" // immutable Gov command ID owns replay
+		serviceID, err = uuid.Parse(in.ManagedGPU.Context.ResourceID)
+		if err != nil {
+			return nil, err
+		}
+		operationID, err = uuid.Parse(in.ManagedGPU.Context.OriginalCreateOperationID)
+		if err != nil {
+			return nil, err
+		}
+		responseSnapshot, err = protojson.Marshal(createResponse(in, CreateAggregateResult{ServiceID: serviceID.String(), OperationID: operationID.String()}))
+		if err != nil {
+			return nil, err
+		}
+	}
 	result, err := u.repo.CreateService(ctx, CreateAggregateInput{
 		TenantID: in.TenantID, Actor: in.Actor, ServiceID: serviceID.String(), SpecID: uuid.NewString(), OperationID: operationID.String(),
 		Name: in.Name, ModelVersionID: in.ModelVersionID, Resources: resourcesJSON,
@@ -66,21 +85,29 @@ func (u *CreateUseCase) Create(ctx context.Context, in inferencebiz.CreateInput)
 		RuntimeMode: in.RuntimeMode, WorkerReplicas: in.WorkerReplicas, RuntimeProvider: in.RuntimeProvider,
 		GPURequest: gpuRequestJSON,
 		GPUPlan:    gpuPlanJSON, GPUPlanDigest: gpuPlanDigest,
+		ManagedGPU: in.ManagedGPU, ResponseSnapshot: responseSnapshot,
 		EndpointEnabled:       in.Endpoint != nil,
 		EndpointContainerPort: endpointContainerPort(in.Endpoint), EndpointServicePort: endpointServicePort(in.Endpoint),
 		EndpointTargetPort: endpointTargetPort(in.Endpoint), EndpointProtocol: endpointProtocol(in.Endpoint),
-		IdempotencyKey: in.RequestID, RequestID: in.RequestID, Generation: 1,
+		IdempotencyKey: idempotencyKey, RequestID: in.RequestID, Generation: 1,
 	})
 	if err != nil {
 		return nil, err
 	}
+	if len(result.ResponseSnapshot) != 0 {
+		return decodeManagedResponse(result.ResponseSnapshot)
+	}
+	return createResponse(in, result), nil
+}
+
+func createResponse(in inferencebiz.CreateInput, result CreateAggregateResult) *inferencev1.OperationResponse {
 	engine := &inferencev1.EngineSpec{Type: in.EngineRuntime, Image: in.ImageRef, Command: append([]string(nil), in.CommandArgv...)}
 	artifact := &inferencev1.ModelArtifact{Provider: in.ArtifactProvider, Reference: in.ArtifactRef, Sha256: in.ArtifactSHA256}
 	runtime := &inferencev1.RuntimeSpec{Mode: runtimeModeEnum(in.RuntimeMode), WorkerReplicas: in.WorkerReplicas, Provider: runtimeProviderEnum(in.RuntimeProvider)}
 	if in.Endpoint != nil {
 		runtime.Endpoint = &inferencev1.EndpointSpec{ContainerPort: in.Endpoint.ContainerPort, ServicePort: in.Endpoint.ServicePort, TargetPort: in.Endpoint.TargetPort, Protocol: in.Endpoint.Protocol}
 	}
-	return &inferencev1.OperationResponse{
+	out := &inferencev1.OperationResponse{
 		Resource: &inferencev1.InferenceService{
 			Id: result.ServiceID, Name: in.Name, DesiredState: "running", Generation: 1,
 			ModelVersionId: in.ModelVersionID, Replicas: in.Replicas,
@@ -89,7 +116,11 @@ func (u *CreateUseCase) Create(ctx context.Context, in inferencebiz.CreateInput)
 			ModelArtifact: artifact, Engine: engine,
 		},
 		Operation: &inferencev1.Operation{Id: result.OperationID, ServiceId: result.ServiceID, Kind: "create", Phase: "pending", Step: "admission", TargetGeneration: 1},
-	}, nil
+	}
+	if in.ManagedGPU != nil {
+		out.DurableOwnerAck = &integrationv1.DurableOwnerAck{OperationId: result.OperationID, ResourceId: result.ServiceID, Accepted: true}
+	}
+	return out
 }
 
 func gpuProto(in *gpubiz.Request) *inferencev1.GpuRequest {

@@ -22,6 +22,17 @@ type CreateInput struct {
 	RuntimeMode                                      string
 	Endpoint                                         *EndpointSpec
 	RequestHash                                      string
+	ManagedGPU                                       *ManagedGPUCommand
+}
+
+// ManagedGPUCommand preserves the trusted command independently of later
+// local generations. Payload is the complete transport command, Business is
+// the canonical body without attachment/IDs, and Context is the original
+// immutable ledger/plan reference used by the refund client.
+type ManagedGPUCommand struct {
+	Context                     gpu.RefundContext
+	Payload, Business           []byte
+	BusinessDigest, RequestHash string
 }
 
 type EndpointSpec struct {

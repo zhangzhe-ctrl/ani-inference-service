@@ -13,6 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	inferencebiz "github.com/zhangzhe-ctrl/ani-inference-service/internal/biz/inference"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
@@ -44,6 +45,8 @@ type CreateAggregateInput struct {
 	EndpointServicePort                      int32
 	EndpointTargetPort, EndpointProtocol     string
 	EndpointEnabled                          bool
+	ManagedGPU                               *inferencebiz.ManagedGPUCommand
+	ResponseSnapshot                         []byte
 }
 
 func endpointParams(in *CreateAggregateInput) (pgtype.Int4, pgtype.Int4, pgtype.Text, pgtype.Text) {
@@ -56,6 +59,7 @@ func endpointParams(in *CreateAggregateInput) (pgtype.Int4, pgtype.Int4, pgtype.
 type CreateAggregateResult struct {
 	ServiceID, OperationID string
 	Replayed               bool
+	ResponseSnapshot       []byte
 }
 
 // Repository owns local persistence for the Inference domain. It never writes
@@ -154,6 +158,33 @@ func (r *Repository) CreateService(ctx context.Context, in CreateAggregateInput)
 	}
 	defer tx.Rollback(ctx)
 	q := New(tx)
+	if in.ManagedGPU != nil {
+		original := in.ManagedGPU.Context
+		if original.TenantID != in.TenantID || original.ResourceID != serviceID.String() || original.OriginalCreateOperationID != opID.String() || len(in.ResponseSnapshot) == 0 || len(in.GPUPlan) == 0 {
+			return CreateAggregateResult{}, inferencebiz.ErrInvalidState
+		}
+		accepted, e := prepareManagedGPU(ctx, tx, in.ManagedGPU, "create", opID.String())
+		if e != nil {
+			return CreateAggregateResult{}, e
+		}
+		if len(accepted.replay) != 0 {
+			return CreateAggregateResult{ServiceID: serviceID.String(), OperationID: opID.String(), Replayed: true, ResponseSnapshot: accepted.replay}, nil
+		}
+		if accepted.closing {
+			response := managedIntentResponse(original, opID.String(), "create", "blocked_by_delete")
+			snapshot, e := protojson.Marshal(response)
+			if e != nil {
+				return CreateAggregateResult{}, e
+			}
+			if e := persistManagedGPUCommand(ctx, tx, in.ManagedGPU, "create", opID.String(), "blocked_by_delete", snapshot); e != nil {
+				return CreateAggregateResult{}, e
+			}
+			if e := tx.Commit(ctx); e != nil {
+				return CreateAggregateResult{}, e
+			}
+			return CreateAggregateResult{ServiceID: serviceID.String(), OperationID: opID.String(), ResponseSnapshot: snapshot}, nil
+		}
+	}
 	if in.IdempotencyKey != "" {
 		if err := q.LockIdempotency(ctx, LockIdempotencyParams{TenantID: in.TenantID, Method: method, IdempotencyKey: in.IdempotencyKey}); err != nil {
 			return CreateAggregateResult{}, err
@@ -197,8 +228,10 @@ func (r *Repository) CreateService(ctx context.Context, in CreateAggregateInput)
 	if reservationID == "" {
 		reservationID = "pending-" + opID.String()
 	}
-	if err = q.InsertQuotaReservation(ctx, InsertQuotaReservationParams{TenantID: tenant, ServiceID: serviceID, OperationID: opID, Generation: generation, ReservationID: reservationID, RequestedResources: jsonOrEmpty(in.Resources, []byte("{}"))}); err != nil {
-		return CreateAggregateResult{}, err
+	if in.ManagedGPU == nil {
+		if err = q.InsertQuotaReservation(ctx, InsertQuotaReservationParams{TenantID: tenant, ServiceID: serviceID, OperationID: opID, Generation: generation, ReservationID: reservationID, RequestedResources: jsonOrEmpty(in.Resources, []byte("{}"))}); err != nil {
+			return CreateAggregateResult{}, err
+		}
 	}
 	if err = q.UpsertResourceWork(ctx, UpsertResourceWorkParams{TenantID: tenant, ServiceID: serviceID, DirtyVersion: generation}); err != nil {
 		return CreateAggregateResult{}, err
@@ -229,6 +262,11 @@ func (r *Repository) CreateService(ctx context.Context, in CreateAggregateInput)
 	eventID := uuid.New()
 	if err = q.AppendAuditEvent(ctx, AppendAuditEventParams{TenantID: tenant, EventID: pgtype.UUID{Bytes: eventID, Valid: true}, ServiceID: serviceID, OperationID: opID, Generation: generation, EventType: "inference.create.accepted", Actor: in.Actor, RequestID: in.RequestID, Payload: []byte(`{"operation_id":"` + opID.String() + `"}`)}); err != nil {
 		return CreateAggregateResult{}, err
+	}
+	if in.ManagedGPU != nil {
+		if err := persistManagedGPUCommand(ctx, tx, in.ManagedGPU, "create", opID.String(), "create_pending", in.ResponseSnapshot); err != nil {
+			return CreateAggregateResult{}, err
+		}
 	}
 	if err = tx.Commit(ctx); err != nil {
 		return CreateAggregateResult{}, err

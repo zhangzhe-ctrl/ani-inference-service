@@ -29,7 +29,12 @@ func commandRPCs(server *InferenceServer) map[string]commandRPC {
 		"start":   server.StartInferenceService,
 		"stop":    server.StopInferenceService,
 		"restart": server.RestartInferenceService,
-		"delete":  server.DeleteInferenceService,
+		"delete": func(ctx context.Context, req *inferencev1.ServiceCommandRequest) (*inferencev1.OperationResponse, error) {
+			if req == nil {
+				return server.DeleteInferenceService(ctx, nil)
+			}
+			return server.DeleteInferenceService(ctx, &inferencev1.DeleteInferenceServiceRequest{RequestId: req.RequestId, ResourceId: req.ResourceId, ExpectedGeneration: req.ExpectedGeneration})
+		},
 	}
 }
 

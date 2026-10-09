@@ -7,13 +7,13 @@ require (
 	github.com/go-kratos/kratos/v3 v3.0.0
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/prometheus/client_golang v1.24.1
+	github.com/zhangzhe-ctrl/ani-accelerator-service v0.0.0-20260924030150-1d32dd9a9173
 	go.opentelemetry.io/otel v1.44.0
 	go.opentelemetry.io/otel/exporters/prometheus v0.66.0
 	go.opentelemetry.io/otel/metric v1.44.0
 	go.opentelemetry.io/otel/sdk v1.44.0
 	go.opentelemetry.io/otel/sdk/metric v1.44.0
 	go.uber.org/automaxprocs v1.6.0
-	github.com/zhangzhe-ctrl/ani-accelerator-service v0.0.0-20260924030150-1d32dd9a9173
 	google.golang.org/grpc v1.83.2
 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 	k8s.io/api v0.36.3
@@ -21,6 +21,7 @@ require (
 	k8s.io/client-go v0.36.3
 	sigs.k8s.io/gateway-api v1.3.0
 	sigs.k8s.io/lws v0.10.0
+	volcano.sh/apis v1.12.1
 )
 
 require (
@@ -48,7 +49,6 @@ require (
 	k8s.io/component-base v0.36.3 // indirect
 	k8s.io/component-helpers v0.36.3 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
-	volcano.sh/apis v1.12.1 // indirect
 )
 
 require (
@@ -73,6 +73,7 @@ require (
 	github.com/prometheus/otlptranslator v1.0.0 // indirect
 	github.com/prometheus/procfs v0.21.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
+	github.com/zhangzhe-ctrl/ani-governance/api/quota v0.0.0-20261009133356-1ab461604c74
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect

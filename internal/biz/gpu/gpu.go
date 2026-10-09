@@ -9,8 +9,10 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
 	"regexp"
 	"sort"
+	"strconv"
 )
 
 // ResolveInput is the caller-owned context for one accelerator resolution.
@@ -160,7 +162,11 @@ func TotalPods(replicas int32, mode string, workers int32) (int32, error) {
 		if workers < 1 {
 			return 0, fmt.Errorf("leader_worker_set requires workers")
 		}
-		return replicas * (workers + 1), nil
+		total := int64(replicas) * (int64(workers) + 1)
+		if total > math.MaxInt32 {
+			return 0, fmt.Errorf("GPU topology overflows pod count")
+		}
+		return int32(total), nil
 	default:
 		return 0, fmt.Errorf("unsupported runtime mode %q", mode)
 	}
@@ -207,6 +213,73 @@ func ValidatePlan(p *Plan, request *Request) error {
 	}
 	if d != p.ResolutionDigest {
 		return fmt.Errorf("GPU plan digest mismatch")
+	}
+	return nil
+}
+
+// ValidateManagedPlan adds static metering/runtime consistency checks at the
+// trusted owner boundary. Resolution authority remains Governance/Accelerator;
+// this validates their frozen snapshot without querying today's catalog.
+func ValidateManagedPlan(p *Plan, request *Request) error {
+	if err := ValidateRequest(request); err != nil {
+		return err
+	}
+	if err := ValidatePlan(p, request); err != nil {
+		return err
+	}
+	if p.Profile == nil || p.Profile.Spec == nil || p.Encoding == nil || p.Totals == nil || p.Runtime == nil {
+		return fmt.Errorf("incomplete GPU plan")
+	}
+	s, e, t, r := p.Profile.Spec, p.Encoding, p.Totals, p.Runtime
+	if p.Profile.ProfileID != request.ProfileID || p.Profile.ProfileVersion != request.ProfileVersion || !uuidPattern.MatchString(s.GroupID) || !uuidPattern.MatchString(p.Profile.BaselineID) || s.ModelKey == "" || s.MaxDevicesPerReplica != 1 || s.CoreLimitPercent < 1 || s.CoreLimitPercent > 100 || s.IsolationClass == "" {
+		return fmt.Errorf("GPU profile does not match request")
+	}
+	if r.SchedulerName != "volcano" || r.QueueName == "" || !namePattern.MatchString(r.QueueName) || r.RecipeVersion != "volcano-hami-v1" || e.Policy != "EXACT" || e.MemoryBlockMiB == 0 {
+		return fmt.Errorf("unsupported frozen GPU runtime or encoding")
+	}
+	specBytes, err := canonical(map[string]any{"spec": s, "baseline_id": p.Profile.BaselineID})
+	if err != nil {
+		return err
+	}
+	specSum := sha256.Sum256(append([]byte("acc-c14n-v1\n"), specBytes...))
+	if hex.EncodeToString(specSum[:]) != p.Profile.SpecDigest {
+		return fmt.Errorf("GPU spec digest mismatch")
+	}
+	if len(p.BaselineDigest) != 64 {
+		return fmt.Errorf("GPU baseline digest is required")
+	}
+	limits := make(map[string]string)
+	for _, field := range r.LimitsPerContainer {
+		limits[field.Key] = field.Value
+	}
+	if limits["volcano.sh/vgpu-number"] != "1" || limits["volcano.sh/vgpu-cores"] != strconv.FormatUint(uint64(s.CoreLimitPercent), 10) {
+		return fmt.Errorf("GPU runtime limits mismatch")
+	}
+	switch s.Mode {
+	case 1:
+		if s.SharedMemoryMiB != 0 || s.CoreLimitPercent != 100 || e.MemoryPercentage != 100 || e.SharedMemoryMiB != 0 || e.MemoryBlocksPerDevice != 0 || t.LogicalDeviceCount != 0 || t.ExclusiveDeviceCount != int64(request.Replicas) || t.SharedMemoryMiB != 0 || limits["volcano.sh/vgpu-memory-percentage"] != "100" || len(limits) != 3 {
+			return fmt.Errorf("whole GPU metering mismatch")
+		}
+	case 2:
+		if s.SharedMemoryMiB <= 0 || s.SharedMemoryMiB > math.MaxInt32 || s.SharedMemoryMiB%int64(e.MemoryBlockMiB) != 0 || e.MemoryBlocksPerDevice != s.SharedMemoryMiB/int64(e.MemoryBlockMiB) || e.MemoryBlocksPerDevice <= 0 || e.MemoryBlocksPerDevice > math.MaxInt32 || e.SharedMemoryMiB != s.SharedMemoryMiB || e.MemoryPercentage != 0 || t.LogicalDeviceCount != int64(request.Replicas) || t.ExclusiveDeviceCount != 0 || t.SharedMemoryMiB != int64(request.Replicas)*s.SharedMemoryMiB || limits["volcano.sh/vgpu-memory"] != strconv.FormatInt(e.MemoryBlocksPerDevice, 10) || len(limits) != 3 {
+			return fmt.Errorf("shared GPU metering mismatch")
+		}
+	default:
+		return fmt.Errorf("unsupported GPU supply mode")
+	}
+	labels := make(map[string]string)
+	for _, field := range r.NodeLabels {
+		labels[field.Key] = field.Value
+	}
+	if labels["accelerator.ani.io/supply-group"] != s.GroupID || labels["accelerator.ani.io/model-key"] != s.ModelKey || labels["accelerator.ani.io/baseline-id"] != p.Profile.BaselineID || len(labels) != 3 {
+		return fmt.Errorf("GPU frozen selectors mismatch")
+	}
+	annotations := make(map[string]string)
+	for _, field := range r.PodAnnotations {
+		annotations[field.Key] = field.Value
+	}
+	if annotations["volcano.sh/vgpu-mode"] != "hami-core" {
+		return fmt.Errorf("GPU runtime annotation mismatch")
 	}
 	return nil
 }

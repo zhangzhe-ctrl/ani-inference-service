@@ -134,6 +134,9 @@ func TestRenderKServeAppliesFrozenGPUPlan(t *testing.T) {
 	if err != nil || !found || annotations["volcano.sh/vgpu-mode"] != "hami-core" {
 		t.Fatalf("pod annotations = %#v, found=%v, err=%v", annotations, found, err)
 	}
+	if annotations["scheduling.volcano.sh/queue-name"] != "inference" {
+		t.Fatalf("queue was not delivered to Volcano PodGroup contract: %#v", annotations)
+	}
 }
 
 func TestRenderKServeRejectsGPUWithoutPlan(t *testing.T) {
@@ -144,7 +147,7 @@ func TestRenderKServeRejectsGPUWithoutPlan(t *testing.T) {
 	}
 }
 
-func TestRenderKServeLLMAppliesFrozenGPUPlanToBothTemplates(t *testing.T) {
+func TestRenderKServeLLMRejectsGPUUntilSynchronousProjectionExists(t *testing.T) {
 	request, plan := testGPUPlan(t, "main")
 	request.Replicas = 2 // one leader plus one worker in the single LWS group
 	plan.Request.Replicas = request.Replicas
@@ -153,32 +156,14 @@ func TestRenderKServeLLMAppliesFrozenGPUPlanToBothTemplates(t *testing.T) {
 		t.Fatalf("GPU plan digest: %v", err)
 	}
 	plan.ResolutionDigest = digest
-	obj, err := renderKServeLLMInferenceService(RuntimeSpec{
+	_, err = renderKServeLLMInferenceService(RuntimeSpec{
 		TenantID: "tenant", ServiceID: "service", Name: "gpu-distributed", Namespace: "models", Image: "registry/vllm:1",
 		ArtifactProvider: "model", ModelClaim: "ani-model-claim", Generation: 4, Replicas: 1, WorkerReplicas: 1,
 		RuntimeMode: "leader_worker_set", Resources: resources.Normalized{GPU: request}, GPUPlan: plan,
 		Endpoint: &EndpointSpec{ContainerPort: KServeLLMWorkloadServicePort, ServicePort: KServeLLMWorkloadServicePort, TargetPort: intstr.FromInt32(KServeLLMWorkloadServicePort), Protocol: corev1.ProtocolTCP},
 	})
-	if err != nil {
-		t.Fatalf("render GPU LLMI: %v", err)
-	}
-	for _, path := range [][]string{{"spec", "template"}, {"spec", "worker"}} {
-		part, found, err := unstructured.NestedMap(obj.Object, path...)
-		if err != nil || !found {
-			t.Fatalf("template at %v = %#v, found=%v, err=%v", path, part, found, err)
-		}
-		if part["schedulerName"] != "volcano" || part["runtimeClassName"] != "gpu-runtime" {
-			t.Fatalf("template at %v scheduling fields = %#v", path, part)
-		}
-		containers, found, err := unstructured.NestedSlice(part, "containers")
-		if err != nil || !found || len(containers) != 1 {
-			t.Fatalf("containers at %v = %#v, found=%v, err=%v", path, containers, found, err)
-		}
-		container := containers[0].(map[string]interface{})
-		limits, found, err := unstructured.NestedMap(container, "resources", "limits")
-		if err != nil || !found || limits["volcano.sh/vgpu-number"] != "1" {
-			t.Fatalf("limits at %v = %#v, found=%v, err=%v", path, limits, found, err)
-		}
+	if err == nil {
+		t.Fatal("GPU LLMI rendered despite unsupported queue and pod annotation propagation")
 	}
 }
 
@@ -202,7 +187,7 @@ func TestKServePodPlacementRejectsDroppedGPUFields(t *testing.T) {
 }
 
 func TestRenderKServeLeaderWorkerSetUsesLLMInferenceService(t *testing.T) {
-	obj, err := renderKServeRuntime(RuntimeSpec{
+	obj, err := RenderKServeRuntime(RuntimeSpec{
 		TenantID: "tenant", ServiceID: "service", Name: "distributed", Namespace: "models", Image: "registry/vllm:1",
 		ArtifactProvider: "model", ModelClaim: "ani-model-claim", Generation: 1, Replicas: 1, WorkerReplicas: 1,
 		RuntimeMode: "leader_worker_set", ServedModelName: "qwen",
@@ -438,7 +423,7 @@ func TestKServeLLMRuntimeWaitsForCurrentLeaderWorkerSet(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			spec := RuntimeSpec{TenantID: "tenant", ServiceID: "service", Name: "model", Namespace: "models", Image: "engine:v2", Generation: 2, Replicas: 2, WorkerReplicas: 1, RuntimeMode: "leader_worker_set", ArtifactProvider: "model", ModelClaim: "model-pvc", CommandArgv: []string{"/requested-command", "caller-arg"}}
-			obj, err := renderKServeRuntime(spec)
+			obj, err := RenderKServeRuntime(spec)
 			if err != nil {
 				t.Fatal(err)
 			}

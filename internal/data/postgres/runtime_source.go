@@ -52,6 +52,10 @@ func (s *RuntimeSource) CurrentRuntime(ctx context.Context, tenantID, serviceID 
 		return kube.DesiredRuntime{}, err
 	}
 	q := New(s.Pool)
+	managed, err := q.GetManagedGPUState(ctx, GetManagedGPUStateParams{TenantID: tenant, ResourceID: service})
+	if err != nil {
+		return kube.DesiredRuntime{}, err
+	}
 	aggregate, err := q.GetService(ctx, GetServiceParams{TenantID: tenant, ID: service})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return kube.DesiredRuntime{}, fmt.Errorf("inference service %s/%s not found", tenantID, serviceID)
@@ -110,6 +114,11 @@ func (s *RuntimeSource) CurrentRuntime(ctx context.Context, tenantID, serviceID 
 		}
 		if err := gpu.ValidatePlan(gpuPlan, resourceSpec.GPU); err != nil {
 			return kube.DesiredRuntime{}, err
+		}
+	}
+	if managed.Managed {
+		if err := gpu.ValidateManagedPlan(gpuPlan, resourceSpec.GPU); err != nil {
+			return kube.DesiredRuntime{}, fmt.Errorf("invalid accepted Governance GPU snapshot: %w", err)
 		}
 	}
 	// Resolution is a durable worker step before ApplyCR. Admission and
@@ -183,7 +192,7 @@ func (s *RuntimeSource) CurrentRuntime(ctx context.Context, tenantID, serviceID 
 			Namespace: s.Namespace, Image: row.ImageRef, ModelVersionID: row.ModelVersionID.String(), ArtifactProvider: row.ArtifactProvider, ArtifactRef: row.ArtifactRef, ArtifactSHA256: row.ArtifactSha256, ServedModelName: row.ServedModelName, EngineRuntime: row.EngineRuntime, Generation: generation,
 			CommandArgv: command, Resources: normalized, Replicas: row.Replicas,
 			WorkerReplicas: workers, RuntimeMode: mode,
-			GPUPlan:  gpuPlan,
+			GPUPlan: gpuPlan, ManagedGPU: managed.Managed,
 			Endpoint: endpoint,
 		},
 		Bindings:        owned,

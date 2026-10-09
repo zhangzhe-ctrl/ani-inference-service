@@ -33,6 +33,38 @@ type InferenceIdempotencyRequest struct {
 	ExpiresAt      pgtype.Timestamptz
 }
 
+type InferenceManagedGpuCommand struct {
+	TenantID          pgtype.UUID
+	OperationID       pgtype.UUID
+	ResourceID        pgtype.UUID
+	CreateOperationID pgtype.UUID
+	Kind              string
+	PayloadHash       string
+	RequestHash       string
+	CommandPayload    []byte
+	ResponseSnapshot  []byte
+	DurableAck        []byte
+	ExecutionIntent   string
+	CreatedAt         pgtype.Timestamptz
+}
+
+type InferenceManagedGpuResource struct {
+	TenantID              pgtype.UUID
+	ResourceID            pgtype.UUID
+	CreateOperationID     pgtype.UUID
+	OwnerService          string
+	MeteringVersion       string
+	OriginalContext       []byte
+	BusinessPayload       []byte
+	BusinessPayloadDigest string
+	CreateRequestHash     string
+	CreatePayload         []byte
+	DeleteOperationID     pgtype.UUID
+	Closing               bool
+	CreatedAt             pgtype.Timestamptz
+	UpdatedAt             pgtype.Timestamptz
+}
+
 type InferenceObservationEvent struct {
 	TenantID              pgtype.UUID
 	EventID               pgtype.UUID
@@ -187,7 +219,8 @@ type InferenceSpec struct {
 	EndpointTargetPort    pgtype.Text
 	EndpointProtocol      pgtype.Text
 	RuntimeProvider       string
-	GpuRequest            []byte
-	GpuPlan               []byte
-	GpuPlanDigest         pgtype.Text
+	// Frozen GPU request; a record absent from inference_managed_gpu_resources is legacy direct, not eligible for Governance refund
+	GpuRequest    []byte
+	GpuPlan       []byte
+	GpuPlanDigest pgtype.Text
 }

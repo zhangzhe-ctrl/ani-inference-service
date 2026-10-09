@@ -43,6 +43,7 @@ type OperationContext struct {
 	// A plan is only present after StepResolveGPU has durably saved it.
 	GPURequest     *gpu.Request
 	GPUPlan        *gpu.Plan
+	ManagedGPU     bool
 	Replicas       int32
 	WorkerReplicas int32
 	RuntimeMode    string
@@ -219,6 +220,9 @@ func (r *Runner) runStep(ctx context.Context, op OperationContext) (stepResult, 
 		return stepResult{phase: OperationRunning, step: string(StepReserveQuota), event: "admission.accepted"}, nil
 
 	case string(StepReserveQuota):
+		if op.ManagedGPU {
+			return stepResult{phase: OperationRunning, step: nextAfterQuota(op), event: "quota.governance_owned"}, nil
+		}
 		if r.Quota == nil {
 			return stepResult{phase: OperationRunning, step: nextAfterQuota(op), event: "quota.skipped"}, nil
 		}
@@ -298,6 +302,9 @@ func (r *Runner) runStep(ctx context.Context, op OperationContext) (stepResult, 
 		return stepResult{phase: OperationRunning, step: nextAfterQuota(op), event: "quota.confirmed"}, nil
 
 	case string(StepResolveGPU):
+		if op.ManagedGPU && op.GPURequest == nil {
+			return stepResult{}, fmt.Errorf("managed GPU operation has no frozen GPU request")
+		}
 		// A missing GPU request means this generation does not use a GPU. It
 		// must not contact the accelerator service or add scheduling/runtime
 		// fields; the caller's engine and command remain unchanged.
@@ -308,10 +315,17 @@ func (r *Runner) runStep(ctx context.Context, op OperationContext) (stepResult, 
 			return stepResult{}, fmt.Errorf("validate GPU request: %w", err)
 		}
 		if op.GPUPlan != nil {
-			if err := gpu.ValidatePlan(op.GPUPlan, op.GPURequest); err != nil {
+			validate := gpu.ValidatePlan
+			if op.ManagedGPU {
+				validate = gpu.ValidateManagedPlan
+			}
+			if err := validate(op.GPUPlan, op.GPURequest); err != nil {
 				return stepResult{}, fmt.Errorf("validate persisted GPU plan: %w", err)
 			}
 			return stepResult{phase: OperationRunning, step: string(StepApplyCR), event: "gpu.reused"}, nil
+		}
+		if op.ManagedGPU {
+			return stepResult{}, fmt.Errorf("managed GPU operation has no frozen Governance plan")
 		}
 		if r.GPU == nil {
 			return stepResult{}, fmt.Errorf("%w: GPU resolver", ErrOperationProviderMissing)
@@ -336,6 +350,9 @@ func (r *Runner) runStep(ctx context.Context, op OperationContext) (stepResult, 
 		return stepResult{phase: OperationRunning, step: string(StepApplyCR), event: "gpu.resolved"}, nil
 
 	case string(StepReleasePreviousQuota):
+		if op.ManagedGPU {
+			return stepResult{phase: OperationRunning, step: string(StepReserveQuota), event: "previous_quota.governance_owned"}, nil
+		}
 		if r.Quota == nil {
 			return stepResult{phase: OperationRunning, step: string(StepReserveQuota), event: "previous_quota.skipped"}, nil
 		}
@@ -538,6 +555,9 @@ func (r *Runner) runStep(ctx context.Context, op OperationContext) (stepResult, 
 		return stepResult{phase: OperationSucceeded, step: string(StepComplete), event: "publication.published"}, nil
 
 	case string(StepReleaseQuota):
+		if op.ManagedGPU {
+			return stepResult{phase: OperationSucceeded, step: string(StepComplete), event: "quota.governance_owned"}, nil
+		}
 		// The store returns only outstanding reservations. A prior stop, or
 		// a retry after the release was persisted, can leave none to release.
 		if op.Reservation.ReservationID == "" {
