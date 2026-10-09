@@ -30,21 +30,8 @@ message ManagedGPU {
     string server_name = 5;
     google.protobuf.Duration timeout = 6;
   }
-  message LWSAdmission {
-    // Explicit TLS listener for synchronous managed LWS CREATE/UPDATE.
-    string address = 1;
-    string ca_file = 2;
-    string cert_file = 3;
-    string key_file = 4;
-    // Exact single DNS SAN of the Kubernetes API server's client certificate.
-    string api_server_client_dns_name = 5;
-    // Exact authenticated KServe controller service-account username.
-    string controller_username = 6;
-  }
   Receiver receiver = 1;
   Refund refund = 2;
-  // Required whenever the managed Governance receiver is configured.
-  LWSAdmission lws_admission = 3;
 }
 
 message Server {

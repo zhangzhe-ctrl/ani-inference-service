@@ -548,6 +548,9 @@ func renderKServeInferenceService(spec RuntimeSpec) (*unstructured.Unstructured,
 
 func renderKServeLLMInferenceService(spec RuntimeSpec) (*unstructured.Unstructured, error) {
 	spec = normalizeEndpoint(spec)
+	if spec.ManagedGPU || spec.Resources.GPU != nil {
+		return nil, errors.New("GPU LWS rendering requires a synchronous pre-create projection hook; KServe v0.16 drops required queue and pod annotations")
+	}
 	if spec.Name == "" || spec.Namespace == "" || spec.ServiceID == "" || spec.TenantID == "" || spec.Image == "" {
 		return nil, errors.New("name, namespace, tenant ID, service ID and image are required")
 	}

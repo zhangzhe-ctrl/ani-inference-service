@@ -128,10 +128,11 @@ retaining its IDs or digests. Charge IDs come from the actual original ledger.
 F=256 would encode the same per-Pod 6144 MiB as q=24; F=1024 encodes q=6.
 The quota amount remains MiB, independent of the block count. Total amounts
 use original GPU-bearing Pods, not the number of surviving current Pods.
-For LWS the count is `groups × (1 + workers)` with container `main` and a
-maximum of 16 GPU Pods. Its metadata uses the synchronous admission path below.
+For LWS the intended count is `groups × (1 + workers)` with container `main`,
+but the currently unsupported managed KServe LWS input is rejected before
+Occupy; the following C02 boundary still applies.
 
-## Synchronous KServe v0.16 LWS projection (C02)
+## KServe v0.16 LWS projection blocker (C02)
 
 For the pinned KServe v0.16.0 LLMI API, `spec.template` and `spec.worker`
 are raw `PodSpec` fields. `WorkloadSpec` has no `annotations`, queue or
@@ -162,52 +163,27 @@ state changes; it does not merge the current object's metadata. See
 [the comparator](https://github.com/kserve/kserve/blob/v0.16.0/pkg/controller/v1alpha1/llmisvc/workload_multi_node.go#L517-L537)
 and [dry-run/full update](https://github.com/kserve/kserve/blob/v0.16.0/pkg/controller/v1alpha1/llmisvc/lifecycle_crud.go#L131-L145).
 
-The actual Inference manager registers a synchronous HTTPS mutation handler at
-`/admission/managed-gpu-lws`. For LWS CREATE and UPDATE, including dry-run, the
-API server applies its patch before storing or returning the object. The patch
-puts the frozen queue on LWS top-level metadata, and puts the frozen scheduler,
-selectors, runtime class, HAMI annotations and GPU limits on both Pod templates.
-It preserves engine command/args and rejects conflicting metadata, resources,
-container names or topology. KServe's expected-object UPDATE and dry-run use
-the same projection, so a later full update retains those fields.
+A deterministic synchronous LWS CREATE/UPDATE admission projection could
+populate the top-level queue and both template GPU annotations before
+controllers observe the object, including KServe's dry-run request. This is
+a possible integration seam, not an installed or verified capability in this
+batch. No such capability has been demonstrated, and a post-creation patch
+would leave a scheduling race. Consequently LWS queue/template metadata
+delivery and **C02 remain blocked**; a renderer assertion on unsupported
+LLMI fields must not be reported as a pass. This conclusion comes from pinned
+source inspection and does not claim a cluster or GPU execution result.
 
-The handler requires TLS 1.3, a verified API server client certificate with the
-configured exact single DNS SAN, and the configured KServe controller's exact
-service-account username for managed writes. Admission labels and owner
-references only identify a candidate. The live LLMI UID must match the owner
-reference; an observed PostgreSQL runtime binding must then uniquely identify
-the accepted tenant/resource. The source uses tenant-preserving joins and
-`RuntimeSource.CurrentRuntime` to validate the original frozen plan and owner
-context. A known managed name without its recorded UID binding is rejected
-until the controller can retry; a closing resource is rejected. UPDATE also
-preserves the old LWS UID, resourceVersion and LLMI controller owner. No
-admission request writes quota, acknowledgements or completion facts.
-An authenticated API server may deliver a finalizer-only UPDATE even after
-closing or owner deletion: UID, owners, PodSpecs and all other metadata must
-remain identical, apart from resourceVersion/managedFields bookkeeping. This
-read-only exception permits garbage collection without permitting workload or
-GPU mutation and does not establish cleanup completion.
-
-The public business validator and trusted receiver accept consistent managed
-GPU LWS requests. The composition root refuses to enable the managed receiver
-without explicit admission settings and its registered manager. CPU/direct
-LLMI objects without a managed context retain their separate behavior. The
-deployment must register the webhook as well as run the listener; the supplied
-[registration example](managed-lws-admission-webhook.example.yaml) is an
-operator input template, not an installed cluster resource or a production
-identity. No cluster deployment or physical scheduling is claimed here.
-
-The software contract test uses the formally pinned KServe v0.16.0 public
-`LLMISVCReconciler.Reconcile`, an external Kubernetes API client boundary,
-and the actual Inference HTTPS handler backed by real PostgreSQL. Its helper
-seeds accepted commands through the actual service/use case, reads the actual
-PG runtime and calls `RenderKServeRuntime`; only the external Accelerator
-result, model/PVC and Kubernetes boundary are fixtures. The independently
-pinned test module under `internal/data/kubernetes/testdata/kserve_lws_contract`
-does not add a production KServe dependency or import Inference internals.
-Actual commands, results and limits are indexed in the three-party acceptance
-document. This test proves software parameter delivery, not workload/GPU
-execution or model readiness.
+The actual business validation helper and service reject managed GPU LWS;
+the LLMI renderer also rejects GPU LWS while preserving CPU LWS. The typed
+`ProjectManagedGPULeaderWorkerSet(spec, input)` helper is a future synchronous
+pre-CREATE seam only: it requires a managed snapshot, matching namespace and
+KServe-derived name, no UID/resourceVersion, exact groups/size and explicit
+leader/worker `main` containers. It deep-copies the input, preserves engine
+arguments and projects top-level queue plus both templates' scheduler,
+selectors, runtime class, HAMI annotations and GPU limits, rejecting conflicts.
+KServe v0.16 does not call it, and preserving that projection across UPDATE
+has not been integrated. Its deterministic typed projection cannot complete
+C02 by itself.
 
 For the supported Deployment software chain,
 `RuntimeSource.CurrentRuntime` reads the accepted PG managed marker and
@@ -237,13 +213,6 @@ managed_gpu:
     key_file: /managed/inference-refund-client.key
     server_name: <registered-governance-quota-DNS-name>
     timeout: 5s
-  lws_admission:
-    address: <explicit-listener-host:port>
-    ca_file: /managed/api-server-client-ca.pem
-    cert_file: /managed/admission-server.pem
-    key_file: /managed/admission-server.key
-    api_server_client_dns_name: <issued-api-server-client-DNS-SAN>
-    controller_username: system:serviceaccount:<kserve-namespace>:<controller-account>
 ```
 
 These paths are placeholders, not issued production identities. The shipped
@@ -251,15 +220,6 @@ configuration expands the existing `ANI` environment source keys:
 `ANI_GOVERNANCE_RECEIVER_GRPC_ADDR`, `ANI_GOVERNANCE_RECEIVER_{CA,CERT,KEY}_FILE` and
 `ANI_GOVERNANCE_QUOTA_GRPC_ADDR`, `ANI_GOVERNANCE_QUOTA_{CA,CERT,KEY}_FILE`,
 `ANI_GOVERNANCE_QUOTA_SERVER_NAME`, `ANI_GOVERNANCE_QUOTA_TIMEOUT`.
-LWS admission uses `ANI_MANAGED_LWS_ADMISSION_ADDR`,
-`ANI_MANAGED_LWS_ADMISSION_{CA,CERT,KEY}_FILE`,
-`ANI_MANAGED_LWS_ADMISSION_API_SERVER_CLIENT_DNS_NAME` and
-`ANI_MANAGED_LWS_ADMISSION_CONTROLLER_USERNAME`. Configure the API server's
-webhook client authentication to present the issued client certificate to this
-listener; `caBundle` in the registration validates the webhook server and does
-not configure that reverse client identity. Its exact identities, reachable
-address and namespace are deployment inputs. CREATE/UPDATE registration must
-use `failurePolicy: Fail` and `sideEffects: None`, and include dry-run.
 Equivalent explicit YAML values use the same typed fields. No plaintext,
 `skipVerify`, arbitrary owner override or public refund HTTP endpoint exists.
 The dedicated managed listener registers the same Inference service instance;

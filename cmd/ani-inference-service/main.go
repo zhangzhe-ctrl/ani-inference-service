@@ -131,7 +131,7 @@ func run(logger *slog.Logger) error {
 		if modelClient != nil {
 			update = modeldata.NewUpdateUseCase(modelClient, update)
 		}
-		servers, err := configureKubernetesRuntime(pool, modelClient, bc.GetManagedGpu())
+		servers, err := configureKubernetesRuntime(pool, modelClient)
 		if err != nil {
 			return err
 		}
@@ -147,22 +147,14 @@ func run(logger *slog.Logger) error {
 	return nil
 }
 
-func configureKubernetesRuntime(pool *pgxpool.Pool, modelClient *modeldata.Client, managed ...*inferencev1.ManagedGPU) ([]kratosTransport.Server, error) {
-	return buildKubernetesServers(pool, modelClient, managed...)
+func configureKubernetesRuntime(pool *pgxpool.Pool, modelClient *modeldata.Client) ([]kratosTransport.Server, error) {
+	return buildKubernetesServers(pool, modelClient)
 }
 
-func buildKubernetesServers(pool *pgxpool.Pool, modelClient *modeldata.Client, managed ...*inferencev1.ManagedGPU) ([]kratosTransport.Server, error) {
+func buildKubernetesServers(pool *pgxpool.Pool, modelClient *modeldata.Client) ([]kratosTransport.Server, error) {
 	namespace := os.Getenv("ANI_INFERENCE_NAMESPACE")
 	if namespace == "" {
 		return nil, errors.New("ANI_INFERENCE_NAMESPACE is required for Kubernetes runtime")
-	}
-	var managedConfig *inferencev1.ManagedGPU
-	if len(managed) > 0 {
-		managedConfig = managed[0]
-	}
-	webhookServer, admissionConfig, err := configuredManagedLWSAdmissionServer(managedConfig, namespace)
-	if err != nil {
-		return nil, err
 	}
 	publicBaseURL, err := requiredEnv("ANI_HIGRESS_PUBLIC_BASE_URL")
 	if err != nil {
@@ -195,26 +187,13 @@ func buildKubernetesServers(pool *pgxpool.Pool, modelClient *modeldata.Client, m
 	var reconcileRuntime bizreconcile.Runtime = runtimeRouter
 	domain := &bizreconcile.Reconciler{Repository: reconcileStore, Runtime: reconcileRuntime}
 	controller := &kubernetes.Controller{Work: workStore}
-	mgr, err := kubernetes.NewManager(config, controller, ctrlmanager.Options{
-		Cache:         ctrlcache.Options{DefaultNamespaces: map[string]ctrlcache.Config{namespace: {}}},
-		WebhookServer: webhookServer,
-	})
+	mgr, err := kubernetes.NewManager(config, controller, ctrlmanager.Options{Cache: ctrlcache.Options{DefaultNamespaces: map[string]ctrlcache.Config{namespace: {}}}})
 	if err != nil {
 		return nil, fmt.Errorf("build Kubernetes manager: %w", err)
 	}
 	runtimeExecutor.Client = mgr.GetClient()
 	runtimeExecutor.APIReader = mgr.GetAPIReader()
 	runtimeExecutor.CRClient = mgr.GetClient()
-	managerServer := &managedLWSManagerServer{ManagerServer: &server.ManagerServer{Manager: mgr}}
-	if webhookServer != nil {
-		handler, err := kubernetes.NewManagedLWSAdmissionWebhook(postgres.NewManagedLWSAdmissionSource(pool, namespace), mgr.GetAPIReader(), admissionConfig)
-		if err != nil {
-			return nil, fmt.Errorf("build managed LWS admission: %w", err)
-		}
-		// GetWebhookServer also adds this server to the manager lifecycle.
-		mgr.GetWebhookServer().Register(kubernetes.ManagedLWSAdmissionPath, handler)
-		managerServer.admissionRegistered = true
-	}
 	controller.Status = &kubernetes.StatusProjector{Client: mgr.GetClient(), APIReader: mgr.GetAPIReader(), Source: postgres.NewStatusProjectionSource(pool)}
 	modelMaterializer := &modeldata.Materializer{
 		Catalog:      modelClient,
@@ -275,7 +254,7 @@ func buildKubernetesServers(pool *pgxpool.Pool, modelClient *modeldata.Client, m
 			operationRunner.Runtime != nil &&
 			(operationRunner.Audit != nil || operationStoreSupportsAtomicAudit(operationRunner.Store))
 	}
-	return []kratosTransport.Server{loopServer, managerServer}, nil
+	return []kratosTransport.Server{loopServer, &server.ManagerServer{Manager: mgr}}, nil
 }
 
 // configuredGPUResolver is optional. An omitted endpoint leaves CPU-only

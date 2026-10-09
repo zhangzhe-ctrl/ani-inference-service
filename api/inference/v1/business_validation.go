@@ -57,6 +57,13 @@ func ValidateBusinessPayload(req *CreateInferenceServiceRequest) error {
 	spec := req.GetResource()
 	gpu := spec.GetGpu()
 	if gpu != nil {
+		// KServe v0.16's WorkloadSpec cannot carry the Volcano/HAMI pod
+		// annotations, and its LWS metadata filter drops the queue annotation.
+		// Reject before quota acceptance until the owner installs a supported
+		// synchronous LWS projection hook.
+		if runtime.GetMode() == RuntimeMode_RUNTIME_MODE_LEADER_WORKER_SET {
+			return fmt.Errorf("managed GPU LWS creation requires a synchronous pre-create projection hook; KServe v0.16 does not provide it")
+		}
 		if pods > 16 || gpu.GetReplicas() != uint32(pods) || gpu.GetDevicesPerReplica() != 1 || gpu.GetContainerName() != container || gpu.GetProfileVersion() != 1 {
 			return fmt.Errorf("GPU selection differs from fixed runtime topology")
 		}

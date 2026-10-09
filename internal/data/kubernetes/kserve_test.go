@@ -147,7 +147,7 @@ func TestRenderKServeRejectsGPUWithoutPlan(t *testing.T) {
 	}
 }
 
-func TestRenderKServeLLMPreservesLegacyGPURecoveryPodSpec(t *testing.T) {
+func TestRenderKServeLLMRejectsGPUUntilSynchronousProjectionExists(t *testing.T) {
 	request, plan := testGPUPlan(t, "main")
 	request.Replicas = 2 // one leader plus one worker in the single LWS group
 	plan.Request.Replicas = request.Replicas
@@ -156,23 +156,14 @@ func TestRenderKServeLLMPreservesLegacyGPURecoveryPodSpec(t *testing.T) {
 		t.Fatalf("GPU plan digest: %v", err)
 	}
 	plan.ResolutionDigest = digest
-	obj, err := renderKServeLLMInferenceService(RuntimeSpec{
+	_, err = renderKServeLLMInferenceService(RuntimeSpec{
 		TenantID: "tenant", ServiceID: "service", Name: "gpu-distributed", Namespace: "models", Image: "registry/vllm:1",
 		ArtifactProvider: "model", ModelClaim: "ani-model-claim", Generation: 4, Replicas: 1, WorkerReplicas: 1,
 		RuntimeMode: "leader_worker_set", Resources: resources.Normalized{GPU: request}, GPUPlan: plan,
 		Endpoint: &EndpointSpec{ContainerPort: KServeLLMWorkloadServicePort, ServicePort: KServeLLMWorkloadServicePort, TargetPort: intstr.FromInt32(KServeLLMWorkloadServicePort), Protocol: corev1.ProtocolTCP},
 	})
-	if err != nil {
-		t.Fatalf("legacy direct runtime recovery changed: %v", err)
-	}
-	for _, path := range []string{"template", "worker"} {
-		scheduler, _, _ := unstructured.NestedString(obj.Object, "spec", path, "schedulerName")
-		if scheduler != "volcano" {
-			t.Fatalf("legacy %s GPU PodSpec lost scheduler", path)
-		}
-	}
-	if _, found, _ := unstructured.NestedMap(obj.Object, "spec", "annotations"); found {
-		t.Fatal("renderer used an unsupported KServe spec.annotations field")
+	if err == nil {
+		t.Fatal("GPU LLMI rendered despite unsupported queue and pod annotation propagation")
 	}
 }
 

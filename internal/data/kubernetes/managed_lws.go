@@ -12,22 +12,16 @@ import (
 // ProjectManagedGPULeaderWorkerSet projects an accepted frozen plan onto a
 // typed LWS before its first API Create. It performs no API writes and leaves
 // the supplied object unchanged. A synchronous owner/controller integration
-// uses the admission handler for CREATE and UPDATE, including dry-run. This
-// standalone entry point remains limited to an object before its first Create.
+// must invoke it before Create and separately preserve the frozen projection
+// on Update; KServe v0.16's current path does not invoke this hook.
 func ProjectManagedGPULeaderWorkerSet(spec RuntimeSpec, input *lwsv1.LeaderWorkerSet) (*lwsv1.LeaderWorkerSet, error) {
-	return projectManagedGPULeaderWorkerSet(spec, input, false)
-}
-
-// Admission validates the persisted old UID and owner before allowing the
-// same pure projection on UPDATE, including a dry-run UPDATE.
-func projectManagedGPULeaderWorkerSet(spec RuntimeSpec, input *lwsv1.LeaderWorkerSet, update bool) (*lwsv1.LeaderWorkerSet, error) {
 	if !spec.ManagedGPU || spec.RuntimeMode != "leader_worker_set" {
 		return nil, fmt.Errorf("accepted Governance GPU LWS snapshot is required")
 	}
 	if err := validateGPUPlan(spec); err != nil {
 		return nil, err
 	}
-	if input == nil || !update && (input.GetUID() != "" || input.GetResourceVersion() != "") || input.GetDeletionTimestamp() != nil {
+	if input == nil || input.GetUID() != "" || input.GetResourceVersion() != "" || input.GetDeletionTimestamp() != nil {
 		return nil, fmt.Errorf("LWS projection requires an object before its first Create")
 	}
 	if input.Namespace != spec.Namespace || input.Name != KServeLLMWorkloadName(spec.Name) || spec.Namespace == "" || spec.Name == "" {
