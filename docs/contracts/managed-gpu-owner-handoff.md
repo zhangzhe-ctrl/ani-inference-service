@@ -41,6 +41,96 @@ intent is `create_pending`, `closing_intent` or `blocked_by_delete`.
 Normal CREATE writes local service/spec/operation/work records in the same
 transaction; CREATE after a closing tombstone only preserves the command and
 ACK. Refund lookup matches tenant, resource and original CREATE exactly.
+The first DELETE association is immutable; a different DELETE ID cannot
+replace it. Command replay returns the saved response/ACK with normalized
+charges; a changed correlation request ID or managed expected generation does
+not manufacture another execution intent.
+
+## Actual CREATE, DELETE and ACK snapshots
+
+[The complete message examples](managed-gpu-owner-examples.json) were exported
+from the isolated software joint run's actual
+`inference_managed_gpu_commands.command_payload`, `response_snapshot` and
+`durable_ack` records. The saved CREATE/DELETE bytes were decoded with the
+formally published Inference API, rather than rebuilt from illustrative
+fields. Each `commands` entry contains its `kind`, full `request`,
+`response` and `durable_owner_ack`. The file's scope is software only:
+model/workload execution was held.
+
+The persisted canonical command clears correlation `request_id`; protobuf
+JSON therefore omits that empty field and other defaults. This is the accepted
+persistent command representation, not a capture of transport headers.
+Dynamic cluster/profile/resource/operation/charge UUIDs and the user/tenant
+identities belong only to that isolated test environment. They do not supply
+production identity, certificates, deployment configuration or model artifacts;
+the `fixture.invalid` image and held engine command are external test inputs.
+
+The actual joint CREATE is a one-Pod KServe Deployment using
+`kserve-container`: 6144 MiB, cores=25, F=1024 and q=6. Its original
+`gpu.shared_memory_mib` charge and full cumulative refund are **6144 MiB**.
+The DELETE retains that complete original plan, ref and charge vector, while
+using its own persisted DELETE operation ID. CREATE ACK matches original
+CREATE; DELETE ACK matches DELETE; both match the same resource and
+`accepted=true`. No ACK field expresses model/Pod readiness or cleanup
+completion. The refund identity remains original CREATE.
+
+The RPCs remain
+`/inference.v1.InferenceServiceManager/CreateInferenceService` and
+`/inference.v1.InferenceServiceManager/DeleteInferenceService`. These internal
+messages embed trusted attachments; public callers do not supply their
+tenant/actor/ref, plans, hashes or charges. `original_charges` is always the
+entire original ledger vector, including any non-GPU entries; CREATE
+`gpu_charges` and DELETE `original_gpu_charges` are its complete GPU subset.
+The deleting actor is the currently authorized actor. Managed commands do not
+derive identity from `expected_generation`; historical direct records keep
+their separate generation rules.
+
+Use the current public Inference API helpers in
+[`business_payload.go`](../../api/inference/v1/business_payload.go):
+`ValidateBusinessPayload(create)` before Occupy,
+`CanonicalBusinessPayload(create)` / `BusinessPayloadDigest(create)`,
+`ManagedCreateRequestHash(create, resourceTenantUUID, actorType, actorID)`
+and `ManagedDeleteRequestHash(resourceTenantUUID, resourceUUID,
+originalCreateUUID, deleteActorType, deleteActorID)`. The business digest
+excludes correlation ID, attachment and charges. Request hashes include the
+registered action and trusted tenant/actor with the `acc-c14n-v1` prefix.
+These algorithms are distinct from Acc's plan digest; preserve the complete
+resolver result and validate it with `gpu.ValidateManagedPlan` /
+`gpu.PlanDigest`. The [canonical fixed-vector test](../../api/inference/v1/business_payload_test.go)
+defines the business encoding. Serialize actual messages with
+`protojson.MarshalOptions{UseProtoNames: true}`; never reuse a plan digest
+after changing container, replicas, profile or runtime fields.
+
+### Shared and whole field mapping
+
+The two-Pod shared and whole values below come from the passed actual
+PG-to-production-renderer test
+[`TestPostgresManagedGPUFrozenSnapshotProjectsSharedAndWholeReplicas`](../../internal/data/postgres/managed_gpu_test.go).
+The whole case is that persistence/render test, not a whole-GPU joint run or
+physical device acceptance. The linked joint message file above uses one
+shared Pod and total 6144 MiB. For a new whole request, resolve a whole profile
+and recalculate business/request hashes; do not edit a shared plan while
+retaining its IDs or digests. Charge IDs come from the actual original ledger.
+
+| Field / destination | Shared: 2 Pods × 6144 MiB | Whole: 2 Pods × 1 GPU |
+|---|---|---|
+| request / business topology | Deployment replicas=2, GPU replicas=2, devices_per_replica=1, container=`kserve-container` | Same fixed topology |
+| profile.spec | SHARED_FIXED, shared_memory_mib=6144, core_limit_percent=25, SOFTWARE_COOPERATIVE | WHOLE_EXCLUSIVE, shared_memory_mib=0, core_limit_percent=100, WHOLE_DEVICE_EXCLUSIVE |
+| encoding | F=1024, q=6, shared_memory_mib=6144, memory_percentage=0, EXACT | frozen F retained, q=0, shared_memory_mib=0, memory_percentage=100, EXACT |
+| totals | logical_device_count=2, exclusive_device_count=0, shared_memory_mib=12288 | logical_device_count=0, exclusive_device_count=2, shared_memory_mib=0 |
+| per-container GPU limits | `volcano.sh/vgpu-number=1`, cores=25, memory=6; no memory-percentage limit | number=1, cores=100, memory-percentage=100; no absolute memory limit |
+| original GPU charge / complete refund | gpu.shared_memory_mib / 12288 MiB | gpu.physical.count / 2 GPUs |
+| KServe Deployment replica bounds | spec.predictor.minReplicas=maxReplicas=2 | Same fixed bounds |
+| scheduler / selector / runtime class | spec.predictor.schedulerName; nodeSelector from every original runtime.node_labels; runtimeClassName only if nonempty | Same frozen-field mapping |
+| queue and static GPU metadata | spec.predictor.annotations[`scheduling.volcano.sh/queue-name`]=runtime.queue_name; every runtime.pod_annotations retained | Same frozen-field mapping |
+| engine parameters | Caller engine command/args, image and CPU/memory resources retained; GPU mapping adds no engine flags | Same rule |
+
+F=256 would encode the same per-Pod 6144 MiB as q=24; F=1024 encodes q=6.
+The quota amount remains MiB, independent of the block count. Total amounts
+use original GPU-bearing Pods, not the number of surviving current Pods.
+For LWS the intended count is `groups × (1 + workers)` with container `main`,
+but the currently unsupported managed KServe LWS input is rejected before
+Occupy; the following C02 boundary still applies.
 
 ## KServe v0.16 LWS projection blocker (C02)
 
@@ -82,6 +172,25 @@ would leave a scheduling race. Consequently LWS queue/template metadata
 delivery and **C02 remain blocked**; a renderer assertion on unsupported
 LLMI fields must not be reported as a pass. This conclusion comes from pinned
 source inspection and does not claim a cluster or GPU execution result.
+
+The actual business validation helper and service reject managed GPU LWS;
+the LLMI renderer also rejects GPU LWS while preserving CPU LWS. The typed
+`ProjectManagedGPULeaderWorkerSet(spec, input)` helper is a future synchronous
+pre-CREATE seam only: it requires a managed snapshot, matching namespace and
+KServe-derived name, no UID/resourceVersion, exact groups/size and explicit
+leader/worker `main` containers. It deep-copies the input, preserves engine
+arguments and projects top-level queue plus both templates' scheduler,
+selectors, runtime class, HAMI annotations and GPU limits, rejecting conflicts.
+KServe v0.16 does not call it, and preserving that projection across UPDATE
+has not been integrated. Its deterministic typed projection cannot complete
+C02 by itself.
+
+For the supported Deployment software chain,
+`RuntimeSource.CurrentRuntime` reads the accepted PG managed marker and
+validates the complete frozen plan. Both the executor and test-only accepted
+snapshot projection use the same exported `RenderKServeRuntime` function.
+This removes a second renderer implementation; it does not assert that a
+cluster scheduled the emitted object or loaded the model.
 
 ## Managed runtime configuration
 

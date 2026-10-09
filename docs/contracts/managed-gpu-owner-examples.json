@@ -1,0 +1,350 @@
+{
+  "scope": "actual joint software-only command snapshots; model/workload execution held",
+  "commands": [
+    {
+      "kind": "create",
+      "request": {
+        "name": "actual-owner-software",
+        "model_version_id": "30000000-0000-4000-8000-000000000001",
+        "resource": {
+          "requests": {
+            "cpu": "1",
+            "memory": "1Gi"
+          },
+          "limits": {
+            "cpu": "2",
+            "memory": "2Gi"
+          },
+          "gpu": {
+            "cluster_id": "f2d7b67e-32fd-45d0-b69c-c77880e225e2",
+            "pool_id": "a461eee9-a5fb-4273-a430-7630301c4439",
+            "profile_id": "1b842378-274a-4135-b515-298f7d145218",
+            "profile_version": "1",
+            "replicas": 1,
+            "devices_per_replica": 1,
+            "container_name": "kserve-container"
+          }
+        },
+        "replicas": 1,
+        "runtime": {
+          "mode": "RUNTIME_MODE_DEPLOYMENT",
+          "provider": "kserve"
+        },
+        "engine": {
+          "type": "vllm",
+          "image": "fixture.invalid/held-model:software-only",
+          "command": [
+            "owner-supplied-engine"
+          ]
+        },
+        "gpu_owner_attachment": {
+          "ref": {
+            "tenant_id": "11111111-1111-4111-8111-111111111111",
+            "owner_service": "ani-inference",
+            "resource_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+            "create_operation_id": "5749b7e2-c1c3-4ee9-bd55-0c98da9d403c"
+          },
+          "actor": {
+            "type": "user",
+            "id": "1"
+          },
+          "request_hash": "80bd98528c884c316975c03e57aaf323a3f89ca5e1ae77da78cbac5d7ccb844e",
+          "gpu_plan": {
+            "schema_version": 1,
+            "request": {
+              "cluster_id": "f2d7b67e-32fd-45d0-b69c-c77880e225e2",
+              "pool_id": "a461eee9-a5fb-4273-a430-7630301c4439",
+              "profile_id": "1b842378-274a-4135-b515-298f7d145218",
+              "profile_version": "1",
+              "replicas": 1,
+              "devices_per_replica": 1,
+              "container_name": "kserve-container"
+            },
+            "profile": {
+              "profile_id": "1b842378-274a-4135-b515-298f7d145218",
+              "profile_version": "1",
+              "display_name": "joint-6gib",
+              "spec": {
+                "group_id": "52c595d9-4fd7-4467-8ca7-3fa58e94ddc5",
+                "mode": "SHARED_FIXED",
+                "model_key": "nvidia-test",
+                "shared_memory_mib": "6144",
+                "core_limit_percent": 25,
+                "max_devices_per_replica": 1,
+                "isolation_class": "SOFTWARE_COOPERATIVE"
+              },
+              "baseline_id": "4e753180-245a-48f4-ae2e-dab1fcfe1580",
+              "spec_digest": "c83edee60052fc4e7c4ea22ab83d34481ade349339bf3e5e07a2b40ce76e4716",
+              "published": true
+            },
+            "encoding": {
+              "memory_block_mib": 1024,
+              "memory_blocks_per_device": "6",
+              "shared_memory_mib": "6144",
+              "policy": "EXACT"
+            },
+            "totals": {
+              "logical_device_count": "1",
+              "shared_memory_mib": "6144"
+            },
+            "runtime": {
+              "scheduler_name": "volcano",
+              "queue_name": "gpu",
+              "node_labels": [
+                {
+                  "key": "accelerator.ani.io/baseline-id",
+                  "value": "4e753180-245a-48f4-ae2e-dab1fcfe1580"
+                },
+                {
+                  "key": "accelerator.ani.io/model-key",
+                  "value": "nvidia-test"
+                },
+                {
+                  "key": "accelerator.ani.io/supply-group",
+                  "value": "52c595d9-4fd7-4467-8ca7-3fa58e94ddc5"
+                }
+              ],
+              "pod_annotations": [
+                {
+                  "key": "volcano.sh/vgpu-mode",
+                  "value": "hami-core"
+                }
+              ],
+              "limits_per_container": [
+                {
+                  "key": "volcano.sh/vgpu-cores",
+                  "value": "25"
+                },
+                {
+                  "key": "volcano.sh/vgpu-memory",
+                  "value": "6"
+                },
+                {
+                  "key": "volcano.sh/vgpu-number",
+                  "value": "1"
+                }
+              ],
+              "recipe_version": "volcano-hami-v1"
+            },
+            "baseline_digest": "65af569feead334e2118c3cdb2a7a32a468d2c9562681d09ddbf27b4aac816a6",
+            "resolution_digest": "a2a20d27c4d1181c9cc43bacb8ec2ce0976906538194dcd1b06ad559616f7012"
+          },
+          "gpu_charges": [
+            {
+              "charge_id": "2f4abf2f-b2d7-4fd0-b35f-0e4347b4e348",
+              "quota_code": "gpu.shared_memory_mib",
+              "original_units": "6144"
+            }
+          ],
+          "business_payload_digest": "fd79b1df1daa26446fcbf7247e9cd41bac6d7a0586b2cb04de2f949043c77ae7",
+          "metering_version": "gpu-metering-v1"
+        },
+        "original_charges": [
+          {
+            "charge_id": "2f4abf2f-b2d7-4fd0-b35f-0e4347b4e348",
+            "quota_code": "gpu.shared_memory_mib",
+            "original_units": "6144"
+          }
+        ]
+      },
+      "response": {
+        "resource": {
+          "id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+          "name": "actual-owner-software",
+          "desired_state": "running",
+          "generation": "1",
+          "model_version_id": "30000000-0000-4000-8000-000000000001",
+          "resource": {
+            "requests": {
+              "cpu": "1",
+              "memory": "1Gi"
+            },
+            "limits": {
+              "cpu": "2",
+              "memory": "2Gi"
+            },
+            "gpu": {
+              "cluster_id": "f2d7b67e-32fd-45d0-b69c-c77880e225e2",
+              "pool_id": "a461eee9-a5fb-4273-a430-7630301c4439",
+              "profile_id": "1b842378-274a-4135-b515-298f7d145218",
+              "profile_version": "1",
+              "replicas": 1,
+              "devices_per_replica": 1,
+              "container_name": "kserve-container"
+            }
+          },
+          "replicas": 1,
+          "runtime": {
+            "mode": "RUNTIME_MODE_DEPLOYMENT",
+            "worker_replicas": 1,
+            "provider": "kserve"
+          },
+          "model_artifact": {},
+          "engine": {
+            "type": "vllm",
+            "image": "fixture.invalid/held-model:software-only",
+            "command": [
+              "owner-supplied-engine"
+            ]
+          }
+        },
+        "operation": {
+          "id": "5749b7e2-c1c3-4ee9-bd55-0c98da9d403c",
+          "service_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+          "kind": "create",
+          "phase": "pending",
+          "step": "admission",
+          "target_generation": "1"
+        },
+        "durable_owner_ack": {
+          "operation_id": "5749b7e2-c1c3-4ee9-bd55-0c98da9d403c",
+          "resource_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+          "accepted": true
+        }
+      },
+      "durable_owner_ack": {
+        "accepted": true,
+        "resource_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+        "operation_id": "5749b7e2-c1c3-4ee9-bd55-0c98da9d403c"
+      }
+    },
+    {
+      "kind": "delete",
+      "request": {
+        "resource_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+        "gpu_owner_attachment": {
+          "delete_operation_id": "9a6cff61-1d6e-431b-8f76-585a9fad7543",
+          "ref": {
+            "tenant_id": "11111111-1111-4111-8111-111111111111",
+            "owner_service": "ani-inference",
+            "resource_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+            "create_operation_id": "5749b7e2-c1c3-4ee9-bd55-0c98da9d403c"
+          },
+          "actor": {
+            "type": "user",
+            "id": "1"
+          },
+          "request_hash": "955247c9f93a2fe2e0d2ed945a55fde3fc58a5cff47e8de09a2f97d746a0a740",
+          "original_gpu_charges": [
+            {
+              "charge_id": "2f4abf2f-b2d7-4fd0-b35f-0e4347b4e348",
+              "quota_code": "gpu.shared_memory_mib",
+              "original_units": "6144"
+            }
+          ],
+          "original_gpu_plan": {
+            "schema_version": 1,
+            "request": {
+              "cluster_id": "f2d7b67e-32fd-45d0-b69c-c77880e225e2",
+              "pool_id": "a461eee9-a5fb-4273-a430-7630301c4439",
+              "profile_id": "1b842378-274a-4135-b515-298f7d145218",
+              "profile_version": "1",
+              "replicas": 1,
+              "devices_per_replica": 1,
+              "container_name": "kserve-container"
+            },
+            "profile": {
+              "profile_id": "1b842378-274a-4135-b515-298f7d145218",
+              "profile_version": "1",
+              "display_name": "joint-6gib",
+              "spec": {
+                "group_id": "52c595d9-4fd7-4467-8ca7-3fa58e94ddc5",
+                "mode": "SHARED_FIXED",
+                "model_key": "nvidia-test",
+                "shared_memory_mib": "6144",
+                "core_limit_percent": 25,
+                "max_devices_per_replica": 1,
+                "isolation_class": "SOFTWARE_COOPERATIVE"
+              },
+              "baseline_id": "4e753180-245a-48f4-ae2e-dab1fcfe1580",
+              "spec_digest": "c83edee60052fc4e7c4ea22ab83d34481ade349339bf3e5e07a2b40ce76e4716",
+              "published": true
+            },
+            "encoding": {
+              "memory_block_mib": 1024,
+              "memory_blocks_per_device": "6",
+              "shared_memory_mib": "6144",
+              "policy": "EXACT"
+            },
+            "totals": {
+              "logical_device_count": "1",
+              "shared_memory_mib": "6144"
+            },
+            "runtime": {
+              "scheduler_name": "volcano",
+              "queue_name": "gpu",
+              "node_labels": [
+                {
+                  "key": "accelerator.ani.io/baseline-id",
+                  "value": "4e753180-245a-48f4-ae2e-dab1fcfe1580"
+                },
+                {
+                  "key": "accelerator.ani.io/model-key",
+                  "value": "nvidia-test"
+                },
+                {
+                  "key": "accelerator.ani.io/supply-group",
+                  "value": "52c595d9-4fd7-4467-8ca7-3fa58e94ddc5"
+                }
+              ],
+              "pod_annotations": [
+                {
+                  "key": "volcano.sh/vgpu-mode",
+                  "value": "hami-core"
+                }
+              ],
+              "limits_per_container": [
+                {
+                  "key": "volcano.sh/vgpu-cores",
+                  "value": "25"
+                },
+                {
+                  "key": "volcano.sh/vgpu-memory",
+                  "value": "6"
+                },
+                {
+                  "key": "volcano.sh/vgpu-number",
+                  "value": "1"
+                }
+              ],
+              "recipe_version": "volcano-hami-v1"
+            },
+            "baseline_digest": "65af569feead334e2118c3cdb2a7a32a468d2c9562681d09ddbf27b4aac816a6",
+            "resolution_digest": "a2a20d27c4d1181c9cc43bacb8ec2ce0976906538194dcd1b06ad559616f7012"
+          },
+          "metering_version": "gpu-metering-v1"
+        },
+        "original_charges": [
+          {
+            "charge_id": "2f4abf2f-b2d7-4fd0-b35f-0e4347b4e348",
+            "quota_code": "gpu.shared_memory_mib",
+            "original_units": "6144"
+          }
+        ]
+      },
+      "response": {
+        "resource": {
+          "id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+          "desired_state": "deleted"
+        },
+        "operation": {
+          "id": "9a6cff61-1d6e-431b-8f76-585a9fad7543",
+          "service_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+          "kind": "delete",
+          "phase": "pending",
+          "step": "closing_intent"
+        },
+        "durable_owner_ack": {
+          "operation_id": "9a6cff61-1d6e-431b-8f76-585a9fad7543",
+          "resource_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+          "accepted": true
+        }
+      },
+      "durable_owner_ack": {
+        "accepted": true,
+        "resource_id": "4cddd28c-fb81-44c8-a10d-1e11f107f4e0",
+        "operation_id": "9a6cff61-1d6e-431b-8f76-585a9fad7543"
+      }
+    }
+  ]
+}
