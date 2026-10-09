@@ -21,3 +21,10 @@ managed_gpu:
     key_file: "${GOVERNANCE_QUOTA_KEY_FILE:}"
     server_name: "${GOVERNANCE_QUOTA_SERVER_NAME:}"
     timeout: "${GOVERNANCE_QUOTA_TIMEOUT:5s}"
+  lws_admission:
+    address: "${MANAGED_LWS_ADMISSION_ADDR:}"
+    ca_file: "${MANAGED_LWS_ADMISSION_CA_FILE:}"
+    cert_file: "${MANAGED_LWS_ADMISSION_CERT_FILE:}"
+    key_file: "${MANAGED_LWS_ADMISSION_KEY_FILE:}"
+    api_server_client_dns_name: "${MANAGED_LWS_ADMISSION_API_SERVER_CLIENT_DNS_NAME:}"
+    controller_username: "${MANAGED_LWS_ADMISSION_CONTROLLER_USERNAME:}"

@@ -1,0 +1,36 @@
+# Configuration template only; this task does not install it in a cluster.
+# Replace every ${...} from the operator's authoritative deployment inputs.
+# Register before enabling the managed GPU receiver. The server certificate
+# must cover the selected Service DNS, and caBundle must verify that server.
+# API server outbound webhook kubeconfig must present a client certificate
+# with only the exact DNS SAN configured as api_server_client_dns_name;
+# ca_file verifies its issuer. controller_username separately identifies the
+# authenticated KServe service account in the API server's AdmissionReview.
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: ${INFERENCE_MANAGED_LWS_WEBHOOK_NAME}
+webhooks:
+  - name: managed-gpu-lws.ani.internal
+    admissionReviewVersions: [v1]
+    failurePolicy: Fail
+    sideEffects: None
+    matchPolicy: Exact
+    reinvocationPolicy: IfNeeded
+    timeoutSeconds: 10
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: ${INFERENCE_NAMESPACE}
+    clientConfig:
+      service:
+        namespace: ${INFERENCE_NAMESPACE}
+        name: ${INFERENCE_ADMISSION_SERVICE}
+        port: ${INFERENCE_ADMISSION_SERVICE_PORT}
+        path: /admission/managed-gpu-lws
+      caBundle: ${INFERENCE_ADMISSION_SERVER_CA_BASE64}
+    rules:
+      - operations: [CREATE, UPDATE]
+        apiGroups: [leaderworkerset.x-k8s.io]
+        apiVersions: [v1]
+        resources: [leaderworkersets]
+        scope: Namespaced

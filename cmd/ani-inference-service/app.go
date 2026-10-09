@@ -32,6 +32,9 @@ func buildAppWithAllDependenciesAndManagedGPU(bc *inferencev1.Bootstrap, logger 
 	} else if enabled && refund == nil {
 		return nil, errors.New("managed GPU receiver requires the real refund reporter")
 	}
+	if err := requireManagedLWSAdmissionComposition(bc.GetManagedGpu(), background); err != nil {
+		return nil, err
+	}
 	readiness := server.NewReadiness()
 	observability, err := server.NewObservability(Name, Version, readiness)
 	if err != nil {

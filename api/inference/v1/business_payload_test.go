@@ -70,13 +70,17 @@ func TestBusinessValidationRejectsResourcesBeforeQuota(t *testing.T) {
 	}
 }
 
-func TestBusinessValidationFailsClosedForManagedLWSOnly(t *testing.T) {
+func TestBusinessValidationAcceptsFixedManagedLWSAndRejectsTopologyMismatch(t *testing.T) {
 	req := &CreateInferenceServiceRequest{Name: "distributed", ModelVersionId: "11111111-1111-4111-8111-111111111111", Replicas: 1, Engine: &EngineSpec{Type: "vllm", Image: "engine:v1", Command: []string{"serve"}}, Runtime: &RuntimeSpec{Mode: RuntimeMode_RUNTIME_MODE_LEADER_WORKER_SET, WorkerReplicas: 1}, Resource: &ResourceSpec{}}
 	if err := ValidateBusinessPayload(req); err != nil {
 		t.Fatalf("CPU LWS changed: %v", err)
 	}
 	req.Resource.Gpu = &GpuRequest{ClusterId: req.ModelVersionId, PoolId: req.ModelVersionId, ProfileId: req.ModelVersionId, ProfileVersion: 1, Replicas: 2, DevicesPerReplica: 1, ContainerName: "main"}
+	if err := ValidateBusinessPayload(req); err != nil {
+		t.Fatal(err)
+	}
+	req.Resource.Gpu.Replicas = 1
 	if err := ValidateBusinessPayload(req); err == nil {
-		t.Fatal("GPU LWS accepted before a supported synchronous projection exists")
+		t.Fatal("LWS GPU-bearing pod topology mismatch accepted")
 	}
 }
