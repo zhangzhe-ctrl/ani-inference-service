@@ -64,7 +64,7 @@ func ValidateBusinessPayload(req *CreateInferenceServiceRequest) error {
 		if runtime.GetMode() == RuntimeMode_RUNTIME_MODE_LEADER_WORKER_SET {
 			return fmt.Errorf("managed GPU LWS creation requires a synchronous pre-create projection hook; KServe v0.16 does not provide it")
 		}
-		if pods > 16 || gpu.GetReplicas() != uint32(pods) || gpu.GetDevicesPerReplica() != 1 || gpu.GetContainerName() != container || gpu.GetProfileVersion() != 1 {
+		if pods > 16 || gpu.GetReplicas() != uint32(pods) || gpu.GetDevicesPerReplica() < 1 || gpu.GetContainerName() != container || gpu.GetProfileVersion() != 1 {
 			return fmt.Errorf("GPU selection differs from fixed runtime topology")
 		}
 		for _, id := range []string{gpu.GetClusterId(), gpu.GetPoolId(), gpu.GetProfileId()} {

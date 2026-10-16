@@ -16,7 +16,7 @@ test "$("$BUF" --version)" = 1.60.0
 go version -m "$(command -v "$BUF")" | grep -Eq 'mod[[:space:]]+github.com/bufbuild/buf[[:space:]]+v1.60.0'
 acc=github.com/zhangzhe-ctrl/ani-accelerator-service
 version=$(go list -m -f '{{.Version}}' "$acc")
-test "$version" = v0.0.0-20260924030150-1d32dd9a9173
+test "$version" = v0.0.0-20261016163330-c1242866d987
 go mod download "$acc@$version"
 acc_dir=$(go list -m -f '{{.Dir}}' "$acc")
 work=$(mktemp -d "${TMPDIR:-/tmp}/inference-api.XXXXXXXX")

@@ -27,16 +27,20 @@ func validRequest() *Request {
 }
 
 func TestValidateRequestAcceptsPhaseOneShape(t *testing.T) {
-	if err := ValidateRequest(validRequest()); err != nil {
-		t.Fatalf("ValidateRequest() error = %v", err)
+	for _, devices := range []uint32{1, 2, 4} {
+		r := validRequest()
+		r.DevicesPerReplica = devices
+		if err := ValidateRequest(r); err != nil {
+			t.Fatalf("ValidateRequest(%d) error = %v", devices, err)
+		}
 	}
 }
 
 func TestValidateRequestRejectsWrongContainerShape(t *testing.T) {
 	r := validRequest()
-	r.DevicesPerReplica = 2
+	r.DevicesPerReplica = 0
 	if err := ValidateRequest(r); err == nil {
-		t.Fatal("ValidateRequest() accepted devices_per_replica=2")
+		t.Fatal("ValidateRequest() accepted devices_per_replica=0")
 	}
 }
 
@@ -52,7 +56,7 @@ func TestValidateTopologyUsesRuntimeContainerName(t *testing.T) {
 	}
 	r.DevicesPerReplica = 2
 	if err := ValidateTopology(r, 2, "leader_worker_set", 3); err == nil {
-		t.Fatal("accepted devices_per_replica > 1 topology")
+		t.Fatal("accepted GPU replica count that differs from the LWS pod topology")
 	}
 }
 

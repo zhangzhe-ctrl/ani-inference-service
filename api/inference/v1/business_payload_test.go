@@ -80,3 +80,28 @@ func TestBusinessValidationFailsClosedForManagedLWSOnly(t *testing.T) {
 		t.Fatal("GPU LWS accepted before a supported synchronous projection exists")
 	}
 }
+
+func TestBusinessValidationGPUQuantityContract(t *testing.T) {
+	const id = "11111111-1111-4111-8111-111111111111"
+	req := &CreateInferenceServiceRequest{Name: "quantity", ModelVersionId: id, Replicas: 1, Engine: &EngineSpec{Type: "vllm", Image: "engine:v1", Command: "serve"}, Runtime: &RuntimeSpec{Mode: RuntimeMode_RUNTIME_MODE_DEPLOYMENT}, Resource: &ResourceSpec{Gpu: &GpuRequest{ClusterId: id, PoolId: id, ProfileId: id, ProfileVersion: 1, Replicas: 1, ContainerName: "kserve-container"}}}
+	for _, devices := range []uint32{1, 2, 4} {
+		req.Resource.Gpu.DevicesPerReplica = devices
+		if err := ValidateBusinessPayload(req); err != nil {
+			t.Fatalf("legal preliminary count %d: %v", devices, err)
+		}
+	}
+	for _, devices := range []uint32{0} {
+		req.Resource.Gpu.DevicesPerReplica = devices
+		if err := ValidateBusinessPayload(req); err == nil {
+			t.Fatalf("unsupported count %d accepted", devices)
+		}
+	}
+	req.Runtime.Mode, req.Runtime.WorkerReplicas = RuntimeMode_RUNTIME_MODE_LEADER_WORKER_SET, 1
+	req.Resource.Gpu.Replicas, req.Resource.Gpu.ContainerName = 2, "main"
+	for _, devices := range []uint32{1, 2} {
+		req.Resource.Gpu.DevicesPerReplica = devices
+		if err := ValidateBusinessPayload(req); err == nil {
+			t.Fatalf("GPU LWS became supported for count %d", devices)
+		}
+	}
+}

@@ -97,12 +97,13 @@ type Plan struct {
 
 var uuidPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
 var namePattern = regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`)
+var digestPattern = regexp.MustCompile(`^[0-9a-f]{64}$`)
 
 func ValidateRequest(r *Request) error {
 	if r == nil || !uuidPattern.MatchString(r.ClusterID) || !uuidPattern.MatchString(r.PoolID) || !uuidPattern.MatchString(r.ProfileID) || r.ProfileVersion != 1 {
 		return fmt.Errorf("invalid GPU request")
 	}
-	if r.Replicas < 1 || r.Replicas > 16 || r.DevicesPerReplica != 1 || len(r.ContainerName) == 0 || len(r.ContainerName) > 63 || !namePattern.MatchString(r.ContainerName) {
+	if r.Replicas < 1 || r.Replicas > 16 || r.DevicesPerReplica < 1 || len(r.ContainerName) == 0 || len(r.ContainerName) > 63 || !namePattern.MatchString(r.ContainerName) {
 		return fmt.Errorf("unsupported GPU request shape")
 	}
 	return nil
@@ -231,7 +232,7 @@ func ValidateManagedPlan(p *Plan, request *Request) error {
 		return fmt.Errorf("incomplete GPU plan")
 	}
 	s, e, t, r := p.Profile.Spec, p.Encoding, p.Totals, p.Runtime
-	if p.Profile.ProfileID != request.ProfileID || p.Profile.ProfileVersion != request.ProfileVersion || !uuidPattern.MatchString(s.GroupID) || !uuidPattern.MatchString(p.Profile.BaselineID) || s.ModelKey == "" || s.MaxDevicesPerReplica != 1 || s.CoreLimitPercent < 1 || s.CoreLimitPercent > 100 || s.IsolationClass == "" {
+	if p.Profile.ProfileID != request.ProfileID || p.Profile.ProfileVersion != request.ProfileVersion || !uuidPattern.MatchString(s.GroupID) || !uuidPattern.MatchString(p.Profile.BaselineID) || s.ModelKey == "" || s.MaxDevicesPerReplica < 1 || request.DevicesPerReplica > s.MaxDevicesPerReplica || s.CoreLimitPercent < 1 || s.CoreLimitPercent > 100 || s.IsolationClass == "" {
 		return fmt.Errorf("GPU profile does not match request")
 	}
 	if r.SchedulerName != "volcano" || r.QueueName == "" || !namePattern.MatchString(r.QueueName) || r.RecipeVersion != "volcano-hami-v1" || e.Policy != "EXACT" || e.MemoryBlockMiB == 0 {
@@ -245,23 +246,31 @@ func ValidateManagedPlan(p *Plan, request *Request) error {
 	if hex.EncodeToString(specSum[:]) != p.Profile.SpecDigest {
 		return fmt.Errorf("GPU spec digest mismatch")
 	}
-	if len(p.BaselineDigest) != 64 {
+	if !digestPattern.MatchString(p.BaselineDigest) {
 		return fmt.Errorf("GPU baseline digest is required")
 	}
 	limits := make(map[string]string)
 	for _, field := range r.LimitsPerContainer {
 		limits[field.Key] = field.Value
 	}
-	if limits["volcano.sh/vgpu-number"] != "1" || limits["volcano.sh/vgpu-cores"] != strconv.FormatUint(uint64(s.CoreLimitPercent), 10) {
+	if limits["volcano.sh/vgpu-number"] != strconv.FormatUint(uint64(request.DevicesPerReplica), 10) || limits["volcano.sh/vgpu-cores"] != strconv.FormatUint(uint64(s.CoreLimitPercent), 10) {
 		return fmt.Errorf("GPU runtime limits mismatch")
+	}
+	exclusiveTotal, err := multiplyQuantity(int64(request.Replicas), int64(request.DevicesPerReplica))
+	if err != nil {
+		return err
+	}
+	sharedTotal, err := multiplyQuantity(int64(request.Replicas), s.SharedMemoryMiB)
+	if err != nil {
+		return err
 	}
 	switch s.Mode {
 	case 1:
-		if s.SharedMemoryMiB != 0 || s.CoreLimitPercent != 100 || e.MemoryPercentage != 100 || e.SharedMemoryMiB != 0 || e.MemoryBlocksPerDevice != 0 || t.LogicalDeviceCount != 0 || t.ExclusiveDeviceCount != int64(request.Replicas) || t.SharedMemoryMiB != 0 || limits["volcano.sh/vgpu-memory-percentage"] != "100" || len(limits) != 3 {
+		if s.SharedMemoryMiB != 0 || s.CoreLimitPercent != 100 || e.MemoryPercentage != 100 || e.SharedMemoryMiB != 0 || e.MemoryBlocksPerDevice != 0 || t.LogicalDeviceCount != 0 || t.ExclusiveDeviceCount != exclusiveTotal || t.SharedMemoryMiB != 0 || limits["volcano.sh/vgpu-memory-percentage"] != "100" || len(limits) != 3 {
 			return fmt.Errorf("whole GPU metering mismatch")
 		}
 	case 2:
-		if s.SharedMemoryMiB <= 0 || s.SharedMemoryMiB > math.MaxInt32 || s.SharedMemoryMiB%int64(e.MemoryBlockMiB) != 0 || e.MemoryBlocksPerDevice != s.SharedMemoryMiB/int64(e.MemoryBlockMiB) || e.MemoryBlocksPerDevice <= 0 || e.MemoryBlocksPerDevice > math.MaxInt32 || e.SharedMemoryMiB != s.SharedMemoryMiB || e.MemoryPercentage != 0 || t.LogicalDeviceCount != int64(request.Replicas) || t.ExclusiveDeviceCount != 0 || t.SharedMemoryMiB != int64(request.Replicas)*s.SharedMemoryMiB || limits["volcano.sh/vgpu-memory"] != strconv.FormatInt(e.MemoryBlocksPerDevice, 10) || len(limits) != 3 {
+		if s.MaxDevicesPerReplica != 1 || request.DevicesPerReplica != 1 || s.SharedMemoryMiB <= 0 || s.SharedMemoryMiB > math.MaxInt32 || s.SharedMemoryMiB%int64(e.MemoryBlockMiB) != 0 || e.MemoryBlocksPerDevice != s.SharedMemoryMiB/int64(e.MemoryBlockMiB) || e.MemoryBlocksPerDevice <= 0 || e.MemoryBlocksPerDevice > math.MaxInt32 || e.SharedMemoryMiB != s.SharedMemoryMiB || e.MemoryPercentage != 0 || t.LogicalDeviceCount != int64(request.Replicas) || t.ExclusiveDeviceCount != 0 || t.SharedMemoryMiB != sharedTotal || limits["volcano.sh/vgpu-memory"] != strconv.FormatInt(e.MemoryBlocksPerDevice, 10) || len(limits) != 3 {
 			return fmt.Errorf("shared GPU metering mismatch")
 		}
 	default:
@@ -283,6 +292,14 @@ func ValidateManagedPlan(p *Plan, request *Request) error {
 	}
 	return nil
 }
+
+func multiplyQuantity(a, b int64) (int64, error) {
+	if a < 0 || b < 0 || (a > 0 && b > math.MaxInt64/a) {
+		return 0, fmt.Errorf("GPU quantity overflows")
+	}
+	return a * b, nil
+}
+
 func sorted(in []KeyValue) ([]KeyValue, error) {
 	c := append([]KeyValue(nil), in...)
 	sort.Slice(c, func(i, j int) bool { return c[i].Key < c[j].Key })
