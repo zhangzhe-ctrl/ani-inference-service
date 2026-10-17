@@ -1959,7 +1959,7 @@ const file_model_v1_model_proto_rawDesc = "" +
 	"\x12CreateModelVersion\x12#.model.v1.CreateModelVersionRequest\x1a\x16.model.v1.ModelVersion\x12M\n" +
 	"\fGetUploadURL\x12\x1d.model.v1.GetUploadURLRequest\x1a\x1e.model.v1.GetUploadURLResponse\x12A\n" +
 	"\vImportModel\x12\x1c.model.v1.ImportModelRequest\x1a\x14.model.v1.ImportTask\x12b\n" +
-	"\x13GetModelDownloadURL\x12$.model.v1.GetModelDownloadURLRequest\x1a%.model.v1.GetModelDownloadURLResponseBCZAgithub.com/liangzai006/ani-inference-service/api/model/v1;modelv1b\x06proto3"
+	"\x13GetModelDownloadURL\x12$.model.v1.GetModelDownloadURLRequest\x1a%.model.v1.GetModelDownloadURLResponseBEZCgithub.com/zhangzhe-ctrl/ani-inference-service/api/model/v1;modelv1b\x06proto3"
 
 var (
 	file_model_v1_model_proto_rawDescOnce sync.Once

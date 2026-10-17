@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package inference.v1;
 
-option go_package = "github.com/liangzai006/ani-inference-service/api/inference/v1;inferencev1";
+option go_package = "github.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1;inferencev1";
 
 import "google/protobuf/duration.proto";
 

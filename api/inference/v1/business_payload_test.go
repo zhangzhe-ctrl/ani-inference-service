@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
-	integrationv1 "github.com/zhangzhe-ctrl/ani-accelerator-service/api/gen/go/accelerator/integration/v1"
 	"google.golang.org/protobuf/proto"
 	"testing"
 )
@@ -31,7 +30,6 @@ func TestBusinessCanonicalFixedVectorAndRoundtrip(t *testing.T) {
 		t.Fatalf("decoded business differs: %+v", decoded)
 	}
 	req.RequestId = "another"
-	req.GpuOwnerAttachment = &integrationv1.GpuOwnerCreateAttachment{RequestHash: "irrelevant"}
 	req.OriginalCharges = []*OriginalQuotaCharge{{ChargeId: "dynamic", QuotaCode: "cpu", OriginalUnits: 5}}
 	excluded, err := CanonicalBusinessPayload(req)
 	if err != nil || !bytes.Equal(raw, excluded) {

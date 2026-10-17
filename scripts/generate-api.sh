@@ -15,15 +15,16 @@ esac
 test "$("$BUF" --version)" = 1.60.0
 go version -m "$(command -v "$BUF")" | grep -Eq 'mod[[:space:]]+github.com/bufbuild/buf[[:space:]]+v1.60.0'
 acc=github.com/zhangzhe-ctrl/ani-accelerator-service
-version=$(go list -m -f '{{.Version}}' "$acc")
-test "$version" = v0.0.0-20260924030150-1d32dd9a9173
-go mod download "$acc@$version"
-acc_dir=$(go list -m -f '{{.Dir}}' "$acc")
+test -z "$(cd api && go list -m -f '{{if .Replace}}{{.Replace.Path}}{{end}}' "$acc")"
+version=$(cd api && go list -m -f '{{.Version}}' "$acc")
+test "$version" = v0.0.0-20261017190559-93a539326e40
+(cd api && go mod download "$acc@$version")
+acc_dir=$(cd api && go list -m -f '{{.Dir}}' "$acc")
 work=$(mktemp -d "${TMPDIR:-/tmp}/inference-api.XXXXXXXX")
 trap 'rm -rf "$work"' EXIT
 mkdir -p "$work/upstream"
 cp -R api "$work/api"
-cp go.mod go.sum buf.gen.yaml "$work/"
+cp api/go.mod api/go.sum buf.gen.yaml "$work/"
 cp -R "$acc_dir/api/protos" "$work/upstream/accelerator"
 chmod -R u+w "$work/upstream"
 printf '%s\n' \
