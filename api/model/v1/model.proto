@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package model.v1;
 
-option go_package = "github.com/liangzai006/ani-inference-service/api/model/v1;modelv1";
+option go_package = "github.com/zhangzhe-ctrl/ani-inference-service/api/model/v1;modelv1";
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";

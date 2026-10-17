@@ -499,7 +499,7 @@ const file_inference_v1_conf_proto_rawDesc = "" +
 	"\x05Admin\x12\x18\n" +
 	"\anetwork\x18\x01 \x01(\tR\anetwork\x12\x12\n" +
 	"\x04addr\x18\x02 \x01(\tR\x04addr\x123\n" +
-	"\atimeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\atimeoutBKZIgithub.com/liangzai006/ani-inference-service/api/inference/v1;inferencev1b\x06proto3"
+	"\atimeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\atimeoutBMZKgithub.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1;inferencev1b\x06proto3"
 
 var (
 	file_inference_v1_conf_proto_rawDescOnce sync.Once

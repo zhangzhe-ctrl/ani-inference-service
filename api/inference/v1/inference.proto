@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package inference.v1;
 
-option go_package = "github.com/liangzai006/ani-inference-service/api/inference/v1;inferencev1";
+option go_package = "github.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1;inferencev1";
 
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
-import "accelerator/integration/v1/owner_gpu_attachment.proto";
+import "accelerator/command/v1/command.proto";
 
 message ResourceSpec {
   map<string, string> requests = 1;
@@ -115,8 +115,9 @@ message CreateInferenceServiceRequest {
   ModelArtifact model_artifact = 7;
   EngineSpec engine = 8;
   string served_model_name = 9;
-  // Internal Governance command only; never supplied by a public client.
-  accelerator.integration.v1.GpuOwnerCreateAttachment gpu_owner_attachment = 10;
+  // Retired managed GPU attachment; new GPU delivery is not implemented here.
+  reserved 10;
+  reserved "gpu_owner_attachment";
   // Entire original charge vector, including non-GPU business charges.
   repeated OriginalQuotaCharge original_charges = 11;
 }
@@ -144,7 +145,9 @@ message DeleteInferenceServiceRequest {
   string resource_id = 2;
   // Legacy direct records require generation. Governance commands do not.
   int64 expected_generation = 3;
-  accelerator.integration.v1.GpuOwnerDeleteAttachment gpu_owner_attachment = 4;
+  // Retired managed GPU attachment; no fallback decoding.
+  reserved 4;
+  reserved "gpu_owner_attachment";
   repeated OriginalQuotaCharge original_charges = 5;
 }
 message GetInferenceServiceRequest { string resource_id = 1; }
@@ -155,7 +158,7 @@ message OperationResponse {
   Operation operation = 2;
   // Command accepted in the same transaction as its immutable context.
   // This is never evidence of workload readiness or physical release.
-  accelerator.integration.v1.DurableOwnerAck durable_owner_ack = 3;
+  accelerator.command.v1.DurableOwnerAck durable_owner_ack = 3;
 }
 message GetOperationRequest { string operation_id = 1; }
 message ListOperationsRequest {

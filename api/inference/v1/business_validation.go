@@ -10,7 +10,7 @@ import (
 )
 
 // ValidateBusinessPayload checks the public business contract before quota
-// acceptance. Trusted attachments are validated by the Inference receiver.
+// acceptance. This API module does not implement managed GPU delivery.
 func ValidateBusinessPayload(req *CreateInferenceServiceRequest) error {
 	if req == nil || strings.TrimSpace(req.GetName()) == "" {
 		return fmt.Errorf("name is required")

@@ -7,7 +7,7 @@
 package inferencev1
 
 import (
-	v1 "github.com/zhangzhe-ctrl/ani-accelerator-service/api/gen/go/accelerator/integration/v1"
+	v1 "github.com/zhangzhe-ctrl/ani-accelerator-service/api/gen/go/accelerator/command/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -787,8 +787,6 @@ type CreateInferenceServiceRequest struct {
 	ModelArtifact   *ModelArtifact         `protobuf:"bytes,7,opt,name=model_artifact,json=modelArtifact,proto3" json:"model_artifact,omitempty"`
 	Engine          *EngineSpec            `protobuf:"bytes,8,opt,name=engine,proto3" json:"engine,omitempty"`
 	ServedModelName string                 `protobuf:"bytes,9,opt,name=served_model_name,json=servedModelName,proto3" json:"served_model_name,omitempty"`
-	// Internal Governance command only; never supplied by a public client.
-	GpuOwnerAttachment *v1.GpuOwnerCreateAttachment `protobuf:"bytes,10,opt,name=gpu_owner_attachment,json=gpuOwnerAttachment,proto3" json:"gpu_owner_attachment,omitempty"`
 	// Entire original charge vector, including non-GPU business charges.
 	OriginalCharges []*OriginalQuotaCharge `protobuf:"bytes,11,rep,name=original_charges,json=originalCharges,proto3" json:"original_charges,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -886,13 +884,6 @@ func (x *CreateInferenceServiceRequest) GetServedModelName() string {
 		return x.ServedModelName
 	}
 	return ""
-}
-
-func (x *CreateInferenceServiceRequest) GetGpuOwnerAttachment() *v1.GpuOwnerCreateAttachment {
-	if x != nil {
-		return x.GpuOwnerAttachment
-	}
-	return nil
 }
 
 func (x *CreateInferenceServiceRequest) GetOriginalCharges() []*OriginalQuotaCharge {
@@ -1151,9 +1142,8 @@ type DeleteInferenceServiceRequest struct {
 	RequestId  string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	ResourceId string                 `protobuf:"bytes,2,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
 	// Legacy direct records require generation. Governance commands do not.
-	ExpectedGeneration int64                        `protobuf:"varint,3,opt,name=expected_generation,json=expectedGeneration,proto3" json:"expected_generation,omitempty"`
-	GpuOwnerAttachment *v1.GpuOwnerDeleteAttachment `protobuf:"bytes,4,opt,name=gpu_owner_attachment,json=gpuOwnerAttachment,proto3" json:"gpu_owner_attachment,omitempty"`
-	OriginalCharges    []*OriginalQuotaCharge       `protobuf:"bytes,5,rep,name=original_charges,json=originalCharges,proto3" json:"original_charges,omitempty"`
+	ExpectedGeneration int64                  `protobuf:"varint,3,opt,name=expected_generation,json=expectedGeneration,proto3" json:"expected_generation,omitempty"`
+	OriginalCharges    []*OriginalQuotaCharge `protobuf:"bytes,5,rep,name=original_charges,json=originalCharges,proto3" json:"original_charges,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -1207,13 +1197,6 @@ func (x *DeleteInferenceServiceRequest) GetExpectedGeneration() int64 {
 		return x.ExpectedGeneration
 	}
 	return 0
-}
-
-func (x *DeleteInferenceServiceRequest) GetGpuOwnerAttachment() *v1.GpuOwnerDeleteAttachment {
-	if x != nil {
-		return x.GpuOwnerAttachment
-	}
-	return nil
 }
 
 func (x *DeleteInferenceServiceRequest) GetOriginalCharges() []*OriginalQuotaCharge {
@@ -1593,7 +1576,7 @@ var File_inference_v1_inference_proto protoreflect.FileDescriptor
 
 const file_inference_v1_inference_proto_rawDesc = "" +
 	"\n" +
-	"\x1cinference/v1/inference.proto\x12\finference.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a5accelerator/integration/v1/owner_gpu_attachment.proto\"\xb8\x02\n" +
+	"\x1cinference/v1/inference.proto\x12\finference.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$accelerator/command/v1/command.proto\"\xb8\x02\n" +
 	"\fResourceSpec\x12D\n" +
 	"\brequests\x18\x01 \x03(\v2(.inference.v1.ResourceSpec.RequestsEntryR\brequests\x12>\n" +
 	"\x06limits\x18\x02 \x03(\v2&.inference.v1.ResourceSpec.LimitsEntryR\x06limits\x12*\n" +
@@ -1670,7 +1653,7 @@ const file_inference_v1_inference_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12=\n" +
 	"\fcompleted_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"\xdd\x04\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"\x91\x04\n" +
 	"\x1dCreateInferenceServiceRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x12\n" +
@@ -1681,10 +1664,9 @@ const file_inference_v1_inference_proto_rawDesc = "" +
 	"\aruntime\x18\x06 \x01(\v2\x19.inference.v1.RuntimeSpecR\aruntime\x12B\n" +
 	"\x0emodel_artifact\x18\a \x01(\v2\x1b.inference.v1.ModelArtifactR\rmodelArtifact\x120\n" +
 	"\x06engine\x18\b \x01(\v2\x18.inference.v1.EngineSpecR\x06engine\x12*\n" +
-	"\x11served_model_name\x18\t \x01(\tR\x0fservedModelName\x12f\n" +
-	"\x14gpu_owner_attachment\x18\n" +
-	" \x01(\v24.accelerator.integration.v1.GpuOwnerCreateAttachmentR\x12gpuOwnerAttachment\x12L\n" +
-	"\x10original_charges\x18\v \x03(\v2!.inference.v1.OriginalQuotaChargeR\x0foriginalCharges\"x\n" +
+	"\x11served_model_name\x18\t \x01(\tR\x0fservedModelName\x12L\n" +
+	"\x10original_charges\x18\v \x03(\v2!.inference.v1.OriginalQuotaChargeR\x0foriginalChargesJ\x04\b\n" +
+	"\x10\vR\x14gpu_owner_attachment\"x\n" +
 	"\x13OriginalQuotaCharge\x12\x1b\n" +
 	"\tcharge_id\x18\x01 \x01(\tR\bchargeId\x12\x1d\n" +
 	"\n" +
@@ -1711,15 +1693,14 @@ const file_inference_v1_inference_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x1f\n" +
 	"\vresource_id\x18\x02 \x01(\tR\n" +
 	"resourceId\x12/\n" +
-	"\x13expected_generation\x18\x03 \x01(\x03R\x12expectedGeneration\"\xc6\x02\n" +
+	"\x13expected_generation\x18\x03 \x01(\x03R\x12expectedGeneration\"\xfa\x01\n" +
 	"\x1dDeleteInferenceServiceRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x1f\n" +
 	"\vresource_id\x18\x02 \x01(\tR\n" +
 	"resourceId\x12/\n" +
-	"\x13expected_generation\x18\x03 \x01(\x03R\x12expectedGeneration\x12f\n" +
-	"\x14gpu_owner_attachment\x18\x04 \x01(\v24.accelerator.integration.v1.GpuOwnerDeleteAttachmentR\x12gpuOwnerAttachment\x12L\n" +
-	"\x10original_charges\x18\x05 \x03(\v2!.inference.v1.OriginalQuotaChargeR\x0foriginalCharges\"=\n" +
+	"\x13expected_generation\x18\x03 \x01(\x03R\x12expectedGeneration\x12L\n" +
+	"\x10original_charges\x18\x05 \x03(\v2!.inference.v1.OriginalQuotaChargeR\x0foriginalChargesJ\x04\b\x04\x10\x05R\x14gpu_owner_attachment\"=\n" +
 	"\x1aGetInferenceServiceRequest\x12\x1f\n" +
 	"\vresource_id\x18\x01 \x01(\tR\n" +
 	"resourceId\"Z\n" +
@@ -1729,11 +1710,11 @@ const file_inference_v1_inference_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"\x83\x01\n" +
 	"\x1dListInferenceServicesResponse\x12:\n" +
 	"\bservices\x18\x01 \x03(\v2\x1e.inference.v1.InferenceServiceR\bservices\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xdf\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xdb\x01\n" +
 	"\x11OperationResponse\x12:\n" +
 	"\bresource\x18\x01 \x01(\v2\x1e.inference.v1.InferenceServiceR\bresource\x125\n" +
-	"\toperation\x18\x02 \x01(\v2\x17.inference.v1.OperationR\toperation\x12W\n" +
-	"\x11durable_owner_ack\x18\x03 \x01(\v2+.accelerator.integration.v1.DurableOwnerAckR\x0fdurableOwnerAck\"8\n" +
+	"\toperation\x18\x02 \x01(\v2\x17.inference.v1.OperationR\toperation\x12S\n" +
+	"\x11durable_owner_ack\x18\x03 \x01(\v2'.accelerator.command.v1.DurableOwnerAckR\x0fdurableOwnerAck\"8\n" +
 	"\x13GetOperationRequest\x12!\n" +
 	"\foperation_id\x18\x01 \x01(\tR\voperationId\"t\n" +
 	"\x15ListOperationsRequest\x12\x1b\n" +
@@ -1761,7 +1742,7 @@ const file_inference_v1_inference_proto_rawDesc = "" +
 	"\x17RestartInferenceService\x12#.inference.v1.ServiceCommandRequest\x1a\x1f.inference.v1.OperationResponse\x12f\n" +
 	"\x16DeleteInferenceService\x12+.inference.v1.DeleteInferenceServiceRequest\x1a\x1f.inference.v1.OperationResponse\x12J\n" +
 	"\fGetOperation\x12!.inference.v1.GetOperationRequest\x1a\x17.inference.v1.Operation\x12[\n" +
-	"\x0eListOperations\x12#.inference.v1.ListOperationsRequest\x1a$.inference.v1.ListOperationsResponseBKZIgithub.com/liangzai006/ani-inference-service/api/inference/v1;inferencev1b\x06proto3"
+	"\x0eListOperations\x12#.inference.v1.ListOperationsRequest\x1a$.inference.v1.ListOperationsResponseBMZKgithub.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1;inferencev1b\x06proto3"
 
 var (
 	file_inference_v1_inference_proto_rawDescOnce sync.Once
@@ -1802,10 +1783,8 @@ var file_inference_v1_inference_proto_goTypes = []any{
 	nil,                                   // 21: inference.v1.ResourceSpec.RequestsEntry
 	nil,                                   // 22: inference.v1.ResourceSpec.LimitsEntry
 	(*timestamppb.Timestamp)(nil),         // 23: google.protobuf.Timestamp
-	(*v1.GpuOwnerCreateAttachment)(nil),   // 24: accelerator.integration.v1.GpuOwnerCreateAttachment
-	(*fieldmaskpb.FieldMask)(nil),         // 25: google.protobuf.FieldMask
-	(*v1.GpuOwnerDeleteAttachment)(nil),   // 26: accelerator.integration.v1.GpuOwnerDeleteAttachment
-	(*v1.DurableOwnerAck)(nil),            // 27: accelerator.integration.v1.DurableOwnerAck
+	(*fieldmaskpb.FieldMask)(nil),         // 24: google.protobuf.FieldMask
+	(*v1.DurableOwnerAck)(nil),            // 25: accelerator.command.v1.DurableOwnerAck
 }
 var file_inference_v1_inference_proto_depIdxs = []int32{
 	21, // 0: inference.v1.ResourceSpec.requests:type_name -> inference.v1.ResourceSpec.RequestsEntry
@@ -1824,45 +1803,43 @@ var file_inference_v1_inference_proto_depIdxs = []int32{
 	3,  // 13: inference.v1.CreateInferenceServiceRequest.runtime:type_name -> inference.v1.RuntimeSpec
 	5,  // 14: inference.v1.CreateInferenceServiceRequest.model_artifact:type_name -> inference.v1.ModelArtifact
 	6,  // 15: inference.v1.CreateInferenceServiceRequest.engine:type_name -> inference.v1.EngineSpec
-	24, // 16: inference.v1.CreateInferenceServiceRequest.gpu_owner_attachment:type_name -> accelerator.integration.v1.GpuOwnerCreateAttachment
-	10, // 17: inference.v1.CreateInferenceServiceRequest.original_charges:type_name -> inference.v1.OriginalQuotaCharge
-	25, // 18: inference.v1.UpdateInferenceServiceRequest.update_mask:type_name -> google.protobuf.FieldMask
-	1,  // 19: inference.v1.UpdateInferenceServiceRequest.resource:type_name -> inference.v1.ResourceSpec
-	3,  // 20: inference.v1.UpdateInferenceServiceRequest.runtime:type_name -> inference.v1.RuntimeSpec
-	5,  // 21: inference.v1.UpdateInferenceServiceRequest.model_artifact:type_name -> inference.v1.ModelArtifact
-	6,  // 22: inference.v1.UpdateInferenceServiceRequest.engine:type_name -> inference.v1.EngineSpec
-	26, // 23: inference.v1.DeleteInferenceServiceRequest.gpu_owner_attachment:type_name -> accelerator.integration.v1.GpuOwnerDeleteAttachment
-	10, // 24: inference.v1.DeleteInferenceServiceRequest.original_charges:type_name -> inference.v1.OriginalQuotaCharge
-	7,  // 25: inference.v1.ListInferenceServicesResponse.services:type_name -> inference.v1.InferenceService
-	7,  // 26: inference.v1.OperationResponse.resource:type_name -> inference.v1.InferenceService
-	8,  // 27: inference.v1.OperationResponse.operation:type_name -> inference.v1.Operation
-	27, // 28: inference.v1.OperationResponse.durable_owner_ack:type_name -> accelerator.integration.v1.DurableOwnerAck
-	8,  // 29: inference.v1.ListOperationsResponse.operations:type_name -> inference.v1.Operation
-	9,  // 30: inference.v1.InferenceServiceManager.CreateInferenceService:input_type -> inference.v1.CreateInferenceServiceRequest
-	14, // 31: inference.v1.InferenceServiceManager.GetInferenceService:input_type -> inference.v1.GetInferenceServiceRequest
-	15, // 32: inference.v1.InferenceServiceManager.ListInferenceServices:input_type -> inference.v1.ListInferenceServicesRequest
-	11, // 33: inference.v1.InferenceServiceManager.UpdateInferenceService:input_type -> inference.v1.UpdateInferenceServiceRequest
-	12, // 34: inference.v1.InferenceServiceManager.StartInferenceService:input_type -> inference.v1.ServiceCommandRequest
-	12, // 35: inference.v1.InferenceServiceManager.StopInferenceService:input_type -> inference.v1.ServiceCommandRequest
-	12, // 36: inference.v1.InferenceServiceManager.RestartInferenceService:input_type -> inference.v1.ServiceCommandRequest
-	13, // 37: inference.v1.InferenceServiceManager.DeleteInferenceService:input_type -> inference.v1.DeleteInferenceServiceRequest
-	18, // 38: inference.v1.InferenceServiceManager.GetOperation:input_type -> inference.v1.GetOperationRequest
-	19, // 39: inference.v1.InferenceServiceManager.ListOperations:input_type -> inference.v1.ListOperationsRequest
-	17, // 40: inference.v1.InferenceServiceManager.CreateInferenceService:output_type -> inference.v1.OperationResponse
-	7,  // 41: inference.v1.InferenceServiceManager.GetInferenceService:output_type -> inference.v1.InferenceService
-	16, // 42: inference.v1.InferenceServiceManager.ListInferenceServices:output_type -> inference.v1.ListInferenceServicesResponse
-	17, // 43: inference.v1.InferenceServiceManager.UpdateInferenceService:output_type -> inference.v1.OperationResponse
-	17, // 44: inference.v1.InferenceServiceManager.StartInferenceService:output_type -> inference.v1.OperationResponse
-	17, // 45: inference.v1.InferenceServiceManager.StopInferenceService:output_type -> inference.v1.OperationResponse
-	17, // 46: inference.v1.InferenceServiceManager.RestartInferenceService:output_type -> inference.v1.OperationResponse
-	17, // 47: inference.v1.InferenceServiceManager.DeleteInferenceService:output_type -> inference.v1.OperationResponse
-	8,  // 48: inference.v1.InferenceServiceManager.GetOperation:output_type -> inference.v1.Operation
-	20, // 49: inference.v1.InferenceServiceManager.ListOperations:output_type -> inference.v1.ListOperationsResponse
-	40, // [40:50] is the sub-list for method output_type
-	30, // [30:40] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	10, // 16: inference.v1.CreateInferenceServiceRequest.original_charges:type_name -> inference.v1.OriginalQuotaCharge
+	24, // 17: inference.v1.UpdateInferenceServiceRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 18: inference.v1.UpdateInferenceServiceRequest.resource:type_name -> inference.v1.ResourceSpec
+	3,  // 19: inference.v1.UpdateInferenceServiceRequest.runtime:type_name -> inference.v1.RuntimeSpec
+	5,  // 20: inference.v1.UpdateInferenceServiceRequest.model_artifact:type_name -> inference.v1.ModelArtifact
+	6,  // 21: inference.v1.UpdateInferenceServiceRequest.engine:type_name -> inference.v1.EngineSpec
+	10, // 22: inference.v1.DeleteInferenceServiceRequest.original_charges:type_name -> inference.v1.OriginalQuotaCharge
+	7,  // 23: inference.v1.ListInferenceServicesResponse.services:type_name -> inference.v1.InferenceService
+	7,  // 24: inference.v1.OperationResponse.resource:type_name -> inference.v1.InferenceService
+	8,  // 25: inference.v1.OperationResponse.operation:type_name -> inference.v1.Operation
+	25, // 26: inference.v1.OperationResponse.durable_owner_ack:type_name -> accelerator.command.v1.DurableOwnerAck
+	8,  // 27: inference.v1.ListOperationsResponse.operations:type_name -> inference.v1.Operation
+	9,  // 28: inference.v1.InferenceServiceManager.CreateInferenceService:input_type -> inference.v1.CreateInferenceServiceRequest
+	14, // 29: inference.v1.InferenceServiceManager.GetInferenceService:input_type -> inference.v1.GetInferenceServiceRequest
+	15, // 30: inference.v1.InferenceServiceManager.ListInferenceServices:input_type -> inference.v1.ListInferenceServicesRequest
+	11, // 31: inference.v1.InferenceServiceManager.UpdateInferenceService:input_type -> inference.v1.UpdateInferenceServiceRequest
+	12, // 32: inference.v1.InferenceServiceManager.StartInferenceService:input_type -> inference.v1.ServiceCommandRequest
+	12, // 33: inference.v1.InferenceServiceManager.StopInferenceService:input_type -> inference.v1.ServiceCommandRequest
+	12, // 34: inference.v1.InferenceServiceManager.RestartInferenceService:input_type -> inference.v1.ServiceCommandRequest
+	13, // 35: inference.v1.InferenceServiceManager.DeleteInferenceService:input_type -> inference.v1.DeleteInferenceServiceRequest
+	18, // 36: inference.v1.InferenceServiceManager.GetOperation:input_type -> inference.v1.GetOperationRequest
+	19, // 37: inference.v1.InferenceServiceManager.ListOperations:input_type -> inference.v1.ListOperationsRequest
+	17, // 38: inference.v1.InferenceServiceManager.CreateInferenceService:output_type -> inference.v1.OperationResponse
+	7,  // 39: inference.v1.InferenceServiceManager.GetInferenceService:output_type -> inference.v1.InferenceService
+	16, // 40: inference.v1.InferenceServiceManager.ListInferenceServices:output_type -> inference.v1.ListInferenceServicesResponse
+	17, // 41: inference.v1.InferenceServiceManager.UpdateInferenceService:output_type -> inference.v1.OperationResponse
+	17, // 42: inference.v1.InferenceServiceManager.StartInferenceService:output_type -> inference.v1.OperationResponse
+	17, // 43: inference.v1.InferenceServiceManager.StopInferenceService:output_type -> inference.v1.OperationResponse
+	17, // 44: inference.v1.InferenceServiceManager.RestartInferenceService:output_type -> inference.v1.OperationResponse
+	17, // 45: inference.v1.InferenceServiceManager.DeleteInferenceService:output_type -> inference.v1.OperationResponse
+	8,  // 46: inference.v1.InferenceServiceManager.GetOperation:output_type -> inference.v1.Operation
+	20, // 47: inference.v1.InferenceServiceManager.ListOperations:output_type -> inference.v1.ListOperationsResponse
+	38, // [38:48] is the sub-list for method output_type
+	28, // [28:38] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_inference_v1_inference_proto_init() }

@@ -120,7 +120,7 @@ const file_inference_v1_model_reference_proto_rawDesc = "" +
 	"#CheckModelVersionReferencesResponse\x122\n" +
 	"\x15has_active_references\x18\x01 \x01(\bR\x13hasActiveReferences2\x9c\x01\n" +
 	"\x15ModelReferenceService\x12\x82\x01\n" +
-	"\x1bCheckModelVersionReferences\x120.inference.v1.CheckModelVersionReferencesRequest\x1a1.inference.v1.CheckModelVersionReferencesResponseBKZIgithub.com/liangzai006/ani-inference-service/api/inference/v1;inferencev1b\x06proto3"
+	"\x1bCheckModelVersionReferences\x120.inference.v1.CheckModelVersionReferencesRequest\x1a1.inference.v1.CheckModelVersionReferencesResponseBMZKgithub.com/zhangzhe-ctrl/ani-inference-service/api/inference/v1;inferencev1b\x06proto3"
 
 var (
 	file_inference_v1_model_reference_proto_rawDescOnce sync.Once

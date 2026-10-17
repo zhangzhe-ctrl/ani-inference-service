@@ -17,7 +17,8 @@ import (
 // contract. It uses all snake_case business fields, absent messages as null,
 // empty lists/maps, decimal strings for integers/enums, lexical object keys,
 // UTF-8 without HTML escaping or a trailing newline. Command IDs and trusted
-// attachments/charges are excluded. SHA256 has no additional prefix.
+// charges are excluded. Retired attachments are unknown and rejected.
+// SHA256 has no additional prefix.
 func CanonicalBusinessPayload(req *CreateInferenceServiceRequest) ([]byte, error) {
 	if req == nil {
 		return nil, fmt.Errorf("business request is required")
@@ -44,39 +45,6 @@ func BusinessPayloadDigest(req *CreateInferenceServiceRequest) (string, error) {
 	return hex.EncodeToString(sum[:]), nil
 }
 
-// ManagedCreateRequestHash verifies the Governance original acceptance digest
-// independently of the owner attachment. The action is the registered real
-// Inference RPC, and the GPU shape is part of both business and admission.
-func ManagedCreateRequestHash(req *CreateInferenceServiceRequest, tenantID, actorType, actorID string) (string, error) {
-	if req == nil || req.GetResource().GetGpu() == nil {
-		return "", fmt.Errorf("GPU business request is required")
-	}
-	business, err := canonicalMessage(req.ProtoReflect(), true)
-	if err != nil {
-		return "", err
-	}
-	selection, err := canonicalMessage(req.GetResource().GetGpu().ProtoReflect(), false)
-	if err != nil {
-		return "", err
-	}
-	return governanceHash(map[string]any{"schema": "gov-gpu-create-v1", "tenant_id": tenantID, "actor_type": actorType, "actor_id": actorID, "owner": "ani-inference", "action": "/inference.v1.InferenceServiceManager/CreateInferenceService", "gpu_request": selection, "business_type": "inference.v1.CreateInferenceServiceRequest", "business": business})
-}
-
-func ManagedDeleteRequestHash(tenantID, resourceID, originalCreateID, actorType, actorID string) (string, error) {
-	return governanceHash(map[string]any{"schema": "gov-gpu-delete-v1", "tenant_id": tenantID, "actor_type": actorType, "actor_id": actorID, "owner": "ani-inference", "action": "/inference.v1.InferenceServiceManager/DeleteInferenceService", "resource_id": resourceID, "create_operation_id": originalCreateID})
-}
-
-func governanceHash(object map[string]any) (string, error) {
-	var out bytes.Buffer
-	encoder := json.NewEncoder(&out)
-	encoder.SetEscapeHTML(false)
-	if err := encoder.Encode(object); err != nil {
-		return "", err
-	}
-	sum := sha256.Sum256(append([]byte("acc-c14n-v1\n"), bytes.TrimSuffix(out.Bytes(), []byte{'\n'})...))
-	return hex.EncodeToString(sum[:]), nil
-}
-
 func canonicalMessage(msg protoreflect.Message, business bool) (map[string]any, error) {
 	if len(msg.GetUnknown()) != 0 {
 		return nil, fmt.Errorf("unknown business fields are not allowed")
@@ -86,7 +54,7 @@ func canonicalMessage(msg protoreflect.Message, business bool) (map[string]any, 
 	for i := 0; i < fields.Len(); i++ {
 		field := fields.Get(i)
 		name := string(field.Name())
-		if business && (name == "request_id" || name == "gpu_owner_attachment" || name == "original_charges") {
+		if business && (name == "request_id" || name == "original_charges") {
 			continue
 		}
 		value := msg.Get(field)
